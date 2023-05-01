@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:mv_adayi_web_site/constants.dart';
 
-class Page1 extends StatefulWidget {
-  Page1({Key? key}) : super(key: key);
+class WelcomePage extends StatefulWidget {
+  WelcomePage({Key? key}) : super(key: key);
 
   @override
-  State<Page1> createState() => _Page1State();
+  State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _Page1State extends State<Page1> with TickerProviderStateMixin {
+class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin {
   late AnimationController _scrollAnimationControler;
   late Animation<double> _scrollAnimation;
 
@@ -20,9 +19,9 @@ class _Page1State extends State<Page1> with TickerProviderStateMixin {
   }
 
   _initScrollAnimation() {
-    _scrollAnimationControler = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000))
-      ..repeat();
-    _scrollAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: _scrollAnimationControler, curve: Curves.easeInOut));
+    _scrollAnimationControler = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000))..repeat();
+    _scrollAnimation =
+        Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: _scrollAnimationControler, curve: Curves.easeInOut));
   }
 
   @override
@@ -52,15 +51,18 @@ class _Page1State extends State<Page1> with TickerProviderStateMixin {
   }
 
   Widget _buildScrollAnimationWidget() {
-    return AnimatedBuilder(animation: _scrollAnimation, builder: (context, child) {
-      return Opacity(
-        opacity: _scrollAnimation.value,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 50.0 * (1 - _scrollAnimation.value)),
-          child: const Icon(Icons.keyboard_arrow_down, size: 50, color: Colors.white),
-        ),
-      );
-    },);
+    return AnimatedBuilder(
+      animation: _scrollAnimation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _scrollAnimation.value,
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 50.0 * (1 - _scrollAnimation.value)),
+            child: const Icon(Icons.keyboard_arrow_down, size: 50, color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -148,13 +150,27 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            'Merhaba',
-            style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                  // fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 24,
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Merhaba! ',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        // fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
                 ),
+                TextSpan(
+                  text: 'Ben M. Furkan Yağmur,',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        // fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           _buildAboutText(),
@@ -187,30 +203,28 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
 
   Row _buildAboutText() {
     return Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            AnimatedBuilder(
-                animation: _cursorAnimation,
-                builder: (context, child) {
-                  return Text(
-                    _displayText, //'Ben M. Furkan Yağmur',
-                    //  Ben M. Furkan Yağmur || Ben Bilgisayar Mühendisiyim || Ben Siyasetçiyim || Ben 26. Dönem Milletvekiliyim
-                    style: aboutTextStyle(context),
-                  );
-                }),
-            AnimatedBuilder(
-              animation: _cursorAnimation,
-              builder: (context, child) {
-                return Text(
-                  '|',
-                  style: aboutTextStyle(context).copyWith(color: _cursorAnimation.value),
-                );
-              },
-            ),
-          ],
-        );
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        AnimatedBuilder(
+            animation: _cursorAnimation,
+            builder: (context, child) {
+              return Text(
+                _displayText, //'Ben M. Furkan Yağmur',
+                //  Ben M. Furkan Yağmur || Ben Bilgisayar Mühendisiyim || Ben Siyasetçiyim || Ben 26. Dönem Milletvekiliyim
+                style: aboutTextStyle(context),
+              );
+            }),
+        AnimatedBuilder(
+          animation: _cursorAnimation,
+          builder: (context, child) {
+            return Text(
+              '|',
+              style: aboutTextStyle(context).copyWith(color: _cursorAnimation.value),
+            );
+          },
+        ),
+      ],
+    );
   }
-
-
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mv_adayi_web_site/constants.dart';
 import 'package:mv_adayi_web_site/extensions.dart';
-import 'package:mv_adayi_web_site/pages/page1.dart';
+import 'package:mv_adayi_web_site/pages/about_page.dart';
+import 'package:mv_adayi_web_site/pages/welcome_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -12,31 +12,26 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SizedBox.fromSize(
-        size: size,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              controller: scrollController,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            controller: scrollController,
+            child: SizedBox(
+              width: double.infinity,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Page1(),
-                  Container(
-                    height: size.height,
-                    width: double.infinity,
-                    color: Colors.white,
-                  )
+                  WelcomePage(),
+                  AboutPage(),
                 ],
               ),
             ),
-            //  top bar
-            TopBar(),
-          ],
-        ),
+          ),
+          //  top bar
+          const TopBar(),
+        ],
       ),
     );
   }
@@ -59,11 +54,11 @@ class _TopBarState extends State<TopBar> {
     HomePage.scrollController.addListener(() {
       double pixels = HomePage.scrollController.position.pixels;
       if (pixels > 20 && !isScrolled) {
-        setState((){
+        setState(() {
           isScrolled = true;
         });
       } else if (pixels <= 20 && isScrolled) {
-        setState((){
+        setState(() {
           isScrolled = false;
         });
       }
@@ -85,7 +80,7 @@ class _TopBarState extends State<TopBar> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: kTextColor.withOpacity((hover || isScrolled) ? 1.0 : 0.0),
+          color: (hover || isScrolled) ? Colors.black : Colors.transparent,
         ),
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -116,9 +111,13 @@ class _TopBarState extends State<TopBar> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SocialBtn(assetPath: 'twitter.svg', onPressed: () {}),
-                SizedBox(width: 8,),
+                const SizedBox(
+                  width: 8,
+                ),
                 SocialBtn(assetPath: 'instagram.svg', onPressed: () {}),
-                SizedBox(width: 8,),
+                const SizedBox(
+                  width: 8,
+                ),
                 SocialBtn(assetPath: 'facebook.svg', onPressed: () {}),
               ],
             ),
