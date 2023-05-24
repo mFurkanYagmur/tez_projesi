@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/widget/custom_solid_button.dart';
 import 'package:mv_adayi_web_site/widget/page_title.dart';
 
 class AboutPage extends StatefulWidget {
@@ -50,7 +51,9 @@ class _AboutPageState extends State<AboutPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildPharagraphAndSummary(context),
-                const SizedBox(height: kVerticalPadding,),
+                const SizedBox(
+                  height: kVerticalPadding,
+                ),
                 _buildVaatler(),
               ],
             ),
@@ -79,12 +82,20 @@ class _AboutPageState extends State<AboutPage> {
       children: [
         Column(
           children: [
-            Text(vaat.key, style: Theme.of(context).textTheme.displayMedium!.copyWith(
-              // fontWeight: FontWeight.bold,
-              color: kTextLightColor,
-            ),),
-            SizedBox(height: 16,),
-            Text(vaat.value, style: Theme.of(context).textTheme.titleLarge,),
+            Text(
+              vaat.key,
+              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    // fontWeight: FontWeight.bold,
+                    color: kTextLightColor,
+                  ),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              vaat.value,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
           ],
         ),
         // if (index != vaatler.length-1) Container(width: 0.1, height: 100, color: Colors.red,),
@@ -115,34 +126,41 @@ class _AboutPageState extends State<AboutPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(summaryData.length, (index) => _buildSummaryItem(context: context, index: index)),
     );*/
-    return ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          SummaryData data = summaryDataList[index];
-          return ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text.rich(TextSpan(
-              children: [
-                TextSpan(
-                  text: '${data.title}:  ',
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text: data.content,
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: data.onPressed != null ? kPrimaryColor : kTextLightColor,
-                      ),
-                ),
-              ],
-            )),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
-        itemCount: summaryDataList.length);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              SummaryData data = summaryDataList[index];
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text.rich(TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${data.title}:  ',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text: data.content,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            color: data.onPressed != null ? kPrimaryColor : kTextLightColor,
+                          ),
+                    ),
+                  ],
+                )),
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const Divider();
+            },
+            itemCount: summaryDataList.length),
+        const SizedBox(height: kVerticalPadding / 2),
+        CustomSolidButton(text: 'Özgeçmiş Görüntüle', onPressed: () {}),
+      ],
+    );
   }
 
   Column _buildAboutPharagrapf(BuildContext context) {

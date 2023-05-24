@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key? key}) : super(key: key);
@@ -185,7 +186,9 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              launchUrl(Uri.parse('https://www.google.com'));
+            },
             style: ElevatedButton.styleFrom(
               shape: const StadiumBorder(side: BorderSide(color: kPrimaryColor, width: 1)),
               padding: const EdgeInsets.all(16),

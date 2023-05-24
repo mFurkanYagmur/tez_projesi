@@ -16,21 +16,34 @@ class PageTitle extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Text(titleBack.toUpperCaseLocalized(), style: Theme.of(context).textTheme.displayLarge!.copyWith(
-              color: kTextColor.withOpacity(0.07),
-              fontWeight: FontWeight.bold,
-            ),),
+            Text(
+              titleBack.toUpperCaseLocalized(),
+              style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                    color: kTextColor.withOpacity(0.07),
+                    fontWeight: FontWeight.bold,
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.clip,
+            ),
             Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(titleFront, style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: kTextColor,
-                ),),
+                Text(
+                  titleFront,
+                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: kTextColor,
+                      ),
+                ),
                 //  Divider
-                Container(width: 40, height: 3, color: kPrimaryColor, margin: EdgeInsets.only(top: 4),),
+                Container(
+                  width: 100,
+                  height: 3,
+                  color: kPrimaryColor,
+                  margin: EdgeInsets.only(top: 4),
+                ),
               ],
             ),
           ],

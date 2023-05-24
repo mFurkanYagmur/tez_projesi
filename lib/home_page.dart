@@ -3,7 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mv_adayi_web_site/constants.dart';
 import 'package:mv_adayi_web_site/extensions.dart';
 import 'package:mv_adayi_web_site/pages/about_page.dart';
+import 'package:mv_adayi_web_site/pages/icraat1_page.dart';
 import 'package:mv_adayi_web_site/pages/welcome_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -25,6 +27,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   WelcomePage(),
                   AboutPage(),
+                  Icraat1Page(),
                 ],
               ),
             ),
@@ -99,10 +102,11 @@ class _TopBarState extends State<TopBar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                MenuButton(title: 'Seçim Vaatleri', onPressed: () {}, isSelected: true),
-                MenuButton(title: 'Parti', onPressed: () {}),
-                MenuButton(title: 'Hakkımda', onPressed: () {}),
+                MenuButton(title: 'Hakkımda', onPressed: () {}, isSelected: true),
+                MenuButton(title: '150 Günlük Plan', onPressed: () {}),
+                MenuButton(title: 'Seçim Vaatleri', onPressed: () {}),
                 MenuButton(title: 'Vizyon & Misyon', onPressed: () {}),
+                MenuButton(title: 'Parti', onPressed: () {}),
                 MenuButton(title: 'İletişim', onPressed: () {}),
               ],
             ),
@@ -110,21 +114,25 @@ class _TopBarState extends State<TopBar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SocialBtn(assetPath: 'twitter.svg', onPressed: () {}),
+                SocialBtn(assetPath: 'twitter.svg', onPressed: () => _launchUrl('https://twitter.com/')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'instagram.svg', onPressed: () {}),
+                SocialBtn(assetPath: 'instagram.svg', onPressed: () => _launchUrl('https://www.instagram.com/')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'facebook.svg', onPressed: () {}),
+                SocialBtn(assetPath: 'facebook.svg', onPressed: () => _launchUrl('https://www.facebook.com/')),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  _launchUrl(String url){
+    launchUrl(Uri.parse(url));
   }
 }
 
@@ -183,7 +191,7 @@ class _MenuButtonState extends State<MenuButton> {
       child: Text(
         widget.title.toUpperCaseLocalized(),
         style: TextStyle(
-          color: hover ? kPrimaryColor : Colors.white,
+          color: hover || widget.isSelected ? kPrimaryColor : Colors.white,
           fontSize: 14,
         ),
       ),
