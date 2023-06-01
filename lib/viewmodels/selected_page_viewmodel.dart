@@ -8,18 +8,13 @@ class SelectedPageViewModel extends ChangeNotifier {
   set pageVisibility(List<bool> list) => _pageVisibility = list;
   int get selectedPage => max(0,_pageVisibility.indexOf(true));
 
-  // int? lastForceChanged;
+  int lastSelectedPage = 0;
 
-  void notifyPageChanged(int newPageIndex) {
-    if (newPageIndex == selectedPage) return;
-    _pageVisibility[selectedPage] = false;
-    _pageVisibility[newPageIndex] = true;
-    notifyListeners();
+  void notifyPageChanged({required int newPageIndex, required bool pageVisible}) {
+    _pageVisibility[newPageIndex] = pageVisible;
+    if (lastSelectedPage != selectedPage) {
+      lastSelectedPage = selectedPage;
+      notifyListeners();
+    }
   }
-
-  // void pageChange(int newPageIndex) {
-  //   if (newPageIndex == selectedPage) return;
-  //   lastForceChanged = newPageIndex;
-  //   notifyListeners();
-  // }
 }

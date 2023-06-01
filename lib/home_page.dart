@@ -51,9 +51,7 @@ class _HomePageState extends State<HomePage> {
         key: pageKeys[i],
         onVisibilityChanged: (info) {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-            if (info.visibleFraction > 0) {
-              context.read<SelectedPageViewModel>().notifyPageChanged(i);
-            }
+            context.read<SelectedPageViewModel>().notifyPageChanged(newPageIndex: i, pageVisible: info.visibleFraction > 0);
           });
         },
         child: pages[i],
