@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mv_adayi_web_site/constants.dart';
 import 'package:mv_adayi_web_site/extensions.dart';
@@ -7,13 +8,57 @@ import 'package:mv_adayi_web_site/pages/icraat1_page.dart';
 import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
 import 'package:mv_adayi_web_site/pages/vizyon_misyon_page.dart';
 import 'package:mv_adayi_web_site/pages/welcome_page.dart';
+import 'package:mv_adayi_web_site/viewmodels/selected_page_viewmodel.dart';
 import 'package:mv_adayi_web_site/widget/footer.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
 
   static final ScrollController scrollController = ScrollController();
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late List<Widget> pages = [
+    Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        WelcomePage(),
+        AboutPage(),
+      ],
+    ),
+    Icraat1Page(),
+    const SecimVaatleriPage(),
+    const VizyonMisyonPage(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<SelectedPageViewModel>().pageVisibility = List.generate(pages.length, (index) => false);
+    });
+    int pageLength = pages.length;
+    for (int i = 0; i < pageLength; i++) {
+      pages[i] = VisibilityDetector(
+        key: UniqueKey(),
+        onVisibilityChanged: (info) {
+          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+            if (!info.visibleBounds.isEmpty){
+              context.read<SelectedPageViewModel>().notifyPageChanged(i);
+            }
+          });
+        },
+        child: pages[i],
+      );
+    }
+    VisibilityDetectorController.instance.updateInterval = Duration.zero;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +67,20 @@ class HomePage extends StatelessWidget {
       body: Stack(
         children: [
           SingleChildScrollView(
-            controller: scrollController,
+            controller: HomePage.scrollController,
             child: SizedBox(
               width: double.infinity,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  WelcomePage(),
-                  AboutPage(),
-                  Icraat1Page(),
-                  const SecimVaatleriPage(),
-                  const VizyonMisyonPage(),
+                  ...pages,
                   const Footer(),
                 ],
               ),
             ),
           ),
           //  top bar
-          const TopBar(),
+          TopBar(),
         ],
       ),
     );
@@ -47,7 +88,7 @@ class HomePage extends StatelessWidget {
 }
 
 class TopBar extends StatefulWidget {
-  const TopBar({Key? key}) : super(key: key);
+  TopBar({Key? key}) : super(key: key);
 
   @override
   State<TopBar> createState() => _TopBarState();
@@ -56,6 +97,7 @@ class TopBar extends StatefulWidget {
 class _TopBarState extends State<TopBar> {
   bool hover = false;
   bool isScrolled = false;
+  int selectedPage = 0;
 
   @override
   void initState() {
@@ -76,6 +118,7 @@ class _TopBarState extends State<TopBar> {
 
   @override
   Widget build(BuildContext context) {
+    selectedPage = context.watch<SelectedPageViewModel>().selectedPage;
     return MouseRegion(
       onEnter: (event) {
         setState(() {
@@ -108,12 +151,12 @@ class _TopBarState extends State<TopBar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                MenuButton(title: 'Hakkımda', onPressed: () {}, isSelected: true),
-                MenuButton(title: '150 Günlük Plan', onPressed: () {}),
-                MenuButton(title: 'Seçim Vaatleri', onPressed: () {}),
-                MenuButton(title: 'Vizyon & Misyon', onPressed: () {}),
-                MenuButton(title: 'Parti', onPressed: () {}),
-                MenuButton(title: 'İletişim', onPressed: () {}),
+                MenuButton(title: 'Hakkımda', onPressed: () {}, isSelected: selectedPage <= 0),
+                MenuButton(title: '150 Günlük Plan', onPressed: () {}, isSelected: selectedPage == 1),
+                MenuButton(title: 'Seçim Vaatleri', onPressed: () {}, isSelected: selectedPage == 2),
+                MenuButton(title: 'Vizyon & Misyon', onPressed: () {}, isSelected: selectedPage == 3),
+                MenuButton(title: 'Parti', onPressed: () {}, isSelected: selectedPage == 4),
+                // MenuButton(title: 'İletişim', onPressed: () {}, isSelected: widget.pageIndex == 5),
               ],
             ),
             const Spacer(),
@@ -137,7 +180,7 @@ class _TopBarState extends State<TopBar> {
     );
   }
 
-  _launchUrl(String url){
+  _launchUrl(String url) {
     launchUrl(Uri.parse(url));
   }
 }

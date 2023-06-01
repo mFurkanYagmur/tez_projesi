@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/viewmodels/selected_page_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 import 'home_page.dart';
 
@@ -30,7 +32,9 @@ class MyApp extends StatelessWidget {
         dividerColor: kTextColor,
       ),
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: ChangeNotifierProvider(
+          create: (context) => SelectedPageViewModel(),
+          child: HomePage()),
     );
   }
 }
