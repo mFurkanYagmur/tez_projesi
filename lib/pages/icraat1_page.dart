@@ -44,7 +44,7 @@ class Icraat1Page extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
-      // height: size.height,
+      constraints: BoxConstraints(minHeight: size.height),
       color: kLigthGreyBGColor,
       padding: const EdgeInsets.symmetric(
         vertical: kVerticalPadding,
