@@ -7,6 +7,7 @@ import 'package:mv_adayi_web_site/pages/icraat1_page.dart';
 import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
 import 'package:mv_adayi_web_site/pages/vizyon_misyon_page.dart';
 import 'package:mv_adayi_web_site/pages/welcome_page.dart';
+import 'package:mv_adayi_web_site/widget/footer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatelessWidget {
@@ -32,6 +33,7 @@ class HomePage extends StatelessWidget {
                   Icraat1Page(),
                   const SecimVaatleriPage(),
                   const VizyonMisyonPage(),
+                  const Footer(),
                 ],
               ),
             ),

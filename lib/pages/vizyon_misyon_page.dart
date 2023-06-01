@@ -19,7 +19,8 @@ class _VizyonMisyonPageState extends State<VizyonMisyonPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      color: kLigthGreyBGColor,
       padding: const EdgeInsets.symmetric(vertical: kVerticalPadding, horizontal: kHorizontalPadding),
       child: Column(
         children: [
