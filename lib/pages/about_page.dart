@@ -36,7 +36,9 @@ class _AboutPageState extends State<AboutPage> {
     ];
   }
 
-  void _onEmailPressed() {}
+  void _onEmailPressed() {
+    //  TODO: send email
+  }
 
   @override
   Widget build(BuildContext context) {
