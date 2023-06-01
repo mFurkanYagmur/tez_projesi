@@ -5,8 +5,8 @@ import 'package:mv_adayi_web_site/constants.dart';
 import '../widget/page_title.dart';
 
 /// 150 günlük icraatlar
-class Icraat1Page extends StatelessWidget {
-  Icraat1Page({Key? key}) : super(key: key);
+class IcraatPage extends StatelessWidget {
+  IcraatPage({Key? key}) : super(key: key);
 
   final List<Icraat> icraatList = [
     Icraat(

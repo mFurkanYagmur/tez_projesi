@@ -187,7 +187,7 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              launchUrl(Uri.parse('https://www.google.com'));
+              launchUrl(Uri.parse('https://www.ysk.gov.tr'));
             },
             style: ElevatedButton.styleFrom(
               shape: const StadiumBorder(side: BorderSide(color: kPrimaryColor, width: 1)),

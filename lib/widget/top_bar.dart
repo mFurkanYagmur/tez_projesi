@@ -79,7 +79,7 @@ class _TopBarState extends State<TopBar> {
                 MenuButton(title: '150 Günlük Plan', onPressed: () => _scrollToPage(1), isSelected: selectedPage == 1),
                 MenuButton(title: 'Seçim Vaatleri', onPressed: () => _scrollToPage(2), isSelected: selectedPage == 2),
                 MenuButton(title: 'Vizyon & Misyon', onPressed: () => _scrollToPage(3), isSelected: selectedPage == 3),
-                MenuButton(title: 'Parti', onPressed: () {}, isSelected: selectedPage == 4),
+                MenuButton(title: 'Parti', onPressed: () => _launchUrl('https://www.ysk.gov.tr'), isSelected: selectedPage == 4),
                 // MenuButton(title: 'İletişim', onPressed: () {}, isSelected: widget.pageIndex == 5),
               ],
             ),
@@ -87,15 +87,15 @@ class _TopBarState extends State<TopBar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SocialBtn(assetPath: 'twitter.svg', onPressed: () => _launchUrl('https://twitter.com/')),
+                SocialBtn(assetPath: 'twitter.svg', onPressed: () => _launchUrl('https://www.twitter.com')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'instagram.svg', onPressed: () => _launchUrl('https://www.instagram.com/')),
+                SocialBtn(assetPath: 'instagram.svg', onPressed: () => _launchUrl('https://www.instagram.com')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'facebook.svg', onPressed: () => _launchUrl('https://www.facebook.com/')),
+                SocialBtn(assetPath: 'facebook.svg', onPressed: () => _launchUrl('https://www.facebook.com')),
               ],
             ),
           ],
