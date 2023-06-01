@@ -9,14 +9,14 @@ class Footer extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
-      color: Colors.white,
+      color: kLigthGreyBGColor,
       padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding, vertical: kVerticalPadding),
       alignment: Alignment.center,
       child: Text.rich(
         TextSpan(style: Theme.of(context).textTheme.titleSmall, children: const [
           TextSpan(text: 'Copyright © 2023 '),
           TextSpan(
-            text: 'M. Furkan Yağmur',
+            text: 'Furkan Yağmur',
             style: TextStyle(
               color: kPrimaryColor,
             ),

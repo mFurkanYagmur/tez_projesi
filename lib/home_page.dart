@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mv_adayi_web_site/pages/about_page.dart';
+import 'package:mv_adayi_web_site/pages/contact_page.dart';
 import 'package:mv_adayi_web_site/pages/icraat_page.dart';
 import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
 import 'package:mv_adayi_web_site/pages/vizyon_misyon_page.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
     IcraatPage(),
     const SecimVaatleriPage(),
     const VizyonMisyonPage(),
+    const ContactPage(),
   ];
 
   @override
