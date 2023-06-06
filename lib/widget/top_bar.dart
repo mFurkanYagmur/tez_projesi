@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mv_adayi_web_site/extensions.dart';
+import 'package:mv_adayi_web_site/widget/logo.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -61,15 +62,7 @@ class _TopBarState extends State<TopBar> {
           children: [
             InkWell(
               onTap: () => _scrollToPage(0),
-              child: const Text(
-                'MFY',
-                style: TextStyle(
-                  fontFamily: 'BrunoAce',
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: const Logo(),
             ),
             const Spacer(),
             Row(
@@ -104,7 +97,7 @@ class _TopBarState extends State<TopBar> {
     );
   }
 
-  _scrollToPage(int page){
+  _scrollToPage(int page) {
     GlobalKey key = context.read<SelectedPageViewModel>().pageKeys[page];
     Scrollable.ensureVisible(key.currentContext!);
   }

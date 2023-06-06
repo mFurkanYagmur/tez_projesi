@@ -1,11 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/constants.dart';
-import 'package:mv_adayi_web_site/viewmodels/selected_page_viewmodel.dart';
-import 'package:provider/provider.dart';
 
-import 'home_page.dart';
+import 'firebase_options.dart';
+import 'routes.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -29,12 +33,22 @@ class MyApp extends StatelessWidget {
           indent: 0,
           space: 16,
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderSide: const BorderSide(color: kLigthGreyBGColor, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: kPrimaryColor, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          labelStyle: const TextStyle(color: kTextColor),
+          alignLabelWithHint: true,
+        ),
         dividerColor: kTextColor,
       ),
+      onGenerateRoute: Routes.onGenerateRoutes,
       debugShowCheckedModeBanner: false,
-      home: ChangeNotifierProvider(
-          create: (context) => SelectedPageViewModel(),
-          child: HomePage()),
     );
   }
 }

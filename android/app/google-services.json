@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "151704151329",
+    "project_id": "tez-projesi-383f0",
+    "storage_bucket": "tez-projesi-383f0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151704151329:android:db82fc9ada5f3bd5904a60",
+        "android_client_info": {
+          "package_name": "com.furkanyagmur.mv.mv_adayi_web_site"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151704151329-kdckuqp3jsinu40fb789mcadoagvv5jh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCOpTsIwfPce18ZsEcNjBNsgoVIottR9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151704151329-kdckuqp3jsinu40fb789mcadoagvv5jh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
