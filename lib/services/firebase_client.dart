@@ -3,11 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-enum PageType {
-    grid,
-    album,
-    text,
-}
+import '../enum/page_type.dart';
 
 class FirebaseClient {
     static FirebaseFirestore firestore = FirebaseFirestore.instance;
