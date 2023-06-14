@@ -1,51 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:mv_adayi_web_site/model/grid_data_model.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart';
+import '../viewmodels/page_add_viewmodel.dart';
+import 'text_field_counter.dart';
 
-class GridPageItem extends StatelessWidget {
+class GridPageItem extends StatefulWidget {
   const GridPageItem({
-    Key? key,
+    required Key? key,
     required this.dataModel,
     this.editMode = false,
+    required this.index,
   }) : super(key: key);
 
   final GridDataModel dataModel;
   final bool editMode;
+  final int index;
+
+  /// Deleted if dataModel is null
+  // final Function(GridDataModel? gridDataModel)? onDataChanged;
+
+  @override
+  State<GridPageItem> createState() => _GridPageItemState();
+}
+
+class _GridPageItemState extends State<GridPageItem> {
+  PageAddViewModel? pageAddViewModel;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.editMode) {
+      pageAddViewModel ??= context.read<PageAddViewModel>();
+    }
     var iconBorderRadius = BorderRadius.circular(16);
     return Row(
+      key: widget.key,
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // if (widget.editMode) const Center(child: Padding(
+        //   padding: EdgeInsets.all(8.0),
+        //   child: Icon(Icons.drag_handle,),
+        // ),),
+        if (widget.editMode)
+          IconButton(
+            onPressed: () {
+              pageAddViewModel!.pageModel.data.removeAt(widget.index);
+              pageAddViewModel!.notifyChanges();
+
+              // if (widget.onDataChanged != null) widget.onDataChanged!(null);
+            },
+            icon: const Icon(Icons.delete, color: Colors.redAccent),
+          ),
         Stack(
           children: [
             Card(
               shape: RoundedRectangleBorder(borderRadius: iconBorderRadius),
               child: InkWell(
-                onTap: !editMode ? null : () {
-                  _pickIcon();
-                },
+                onTap: !widget.editMode
+                    ? null
+                    : () {
+                        _pickIcon();
+                      },
                 borderRadius: iconBorderRadius,
                 child: Padding(
                   padding: const EdgeInsets.all(kVerticalPadding / 3),
                   child: Icon(
-                    dataModel.iconCodePoint != null ? IconData(dataModel.iconCodePoint!) : Icons.error_outline,
-                    color: dataModel.iconCodePoint != null ? kPrimaryColor : kTextLightColor,
+                    IconData(widget.dataModel.iconCodePoint ?? Icons.edit.codePoint, fontFamily: 'MaterialIcons'),
+                    color: (widget.editMode && widget.dataModel.iconCodePoint == null) ||
+                            (!widget.editMode && widget.dataModel.iconCodePoint != null)
+                        ? kPrimaryColor
+                        : kTextLightColor,
                     size: 30,
                   ),
                 ),
               ),
             ),
-            if (editMode)
-              const Positioned(
+            if (widget.editMode)
+              Positioned(
                 top: 0,
                 right: 0,
                 child: Icon(
-                  Icons.edit,
+                  widget.dataModel.iconCodePoint == null ? null : Icons.edit,
                   color: kPrimaryColor,
                   // size: 16,
                 ),
@@ -54,28 +93,72 @@ class GridPageItem extends StatelessWidget {
         ),
         const SizedBox(width: kHorizontalPadding / 3),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                dataModel.title ?? '',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                dataModel.content ?? '',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: kTextLightColor),
-              ),
-            ],
-          ),
+          child: (widget.editMode)
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Başlık',
+                      ),
+                      initialValue: widget.dataModel.title ?? '',
+                      maxLength: 40,
+                      buildCounter: buildTextFieldCounter,
+                      onChanged: (value) {
+                        widget.dataModel.title = value;
+                        // _notifyChanges();
+                      },
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'İçerik',
+                      ),
+                      initialValue: widget.dataModel.content ?? '',
+                      maxLength: 100,
+                      buildCounter: buildTextFieldCounter,
+                      onChanged: (value) {
+                        widget.dataModel.content = value;
+                        // _notifyChanges();
+                      },
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.dataModel.title ?? '',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      widget.dataModel.content ?? '',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(color: kTextLightColor),
+                    ),
+                  ],
+                ),
         ),
+        if (widget.editMode) const SizedBox(width: 48),
       ],
     );
   }
 
   _pickIcon() async {
-    // FlutterIconPicker()
+    IconData? iconData = await FlutterIconPicker.showIconPicker(context, title: const Text('Bir ikon seçin'));
+    if (iconData == null) return;
+    setState(() {
+      widget.dataModel.iconCodePoint = iconData.codePoint;
+      // pageAddViewModel!.pageModel.data[]
+    });
+    // _notifyChanges();
   }
+
+// _notifyChanges() {
+//   if (widget.onDataChanged != null) widget.onDataChanged!(widget.dataModel);
+// }
 }

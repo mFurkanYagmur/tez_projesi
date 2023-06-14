@@ -5,8 +5,10 @@ class PageModel {
   String? titleFront;
   String? titleBack;
   String? description;
-  PageType? type;
-  Map<String, dynamic>? data;
+  PageType? type = PageType.grid;
+  int column = 1;
+  List data = [];
+  // Map<String, dynamic>? data;
 
   PageModel();
 
@@ -19,12 +21,22 @@ class PageModel {
     required this.data,
   }) : assert (orderNumber != null && titleFront != null && titleBack != null && type != null && data != null);*/
 
-  PageModel.fillData({
-    this.orderNumber,
-    this.titleFront,
-    this.titleBack,
-    this.description,
-    this.type,
-    this.data,
-  });
+  // PageModel.fillData({
+  //   this.orderNumber,
+  //   this.titleFront,
+  //   this.titleBack,
+  //   this.description,
+  //   this.type,
+  //   this.data = const [],
+  // });
+
+  Map toJson() => {
+    'orderNumber': orderNumber,
+    'titleFront': titleFront,
+    'titleBack': titleBack,
+    'description': description,
+    'type': type,
+    'column': column,
+    'data': data,
+  };
 }

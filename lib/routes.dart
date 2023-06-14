@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/admin_page.dart';
 import 'package:mv_adayi_web_site/home_page.dart';
+import 'package:mv_adayi_web_site/viewmodels/page_add_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 import 'viewmodels/selected_page_viewmodel.dart';
@@ -14,7 +15,9 @@ class Routes {
     switch (settings?.name) {
       case '/':
       case adminPage:
-        page = const AdminPage();
+        page = ChangeNotifierProvider(
+            create: (context) => PageAddViewModel(),
+            child: const AdminPage());
         break;
       case homePage:
       default:

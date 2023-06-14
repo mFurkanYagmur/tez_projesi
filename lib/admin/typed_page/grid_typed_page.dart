@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/viewmodels/page_add_viewmodel.dart';
 import 'package:mv_adayi_web_site/widget/grid_page_item.dart';
+import 'package:provider/provider.dart';
 
 import '../../model/grid_data_model.dart';
 
@@ -13,14 +15,12 @@ class GridTypePage extends StatefulWidget {
 }
 
 class _GridTypePageState extends State<GridTypePage> {
-  Map<String, dynamic> data = {};
-
-  List<GridDataModel> gridDataList = [
-    GridDataModel(),
-  ];
+  PageAddViewModel? pageAddViewModel;
 
   @override
   Widget build(BuildContext context) {
+    pageAddViewModel ??= context.read<PageAddViewModel>();
+    context.watch<PageAddViewModel>();
     return Column(
       children: [
         TextFormField(
@@ -34,30 +34,46 @@ class _GridTypePageState extends State<GridTypePage> {
               return newValue;
             }),
           ],
-          initialValue: data['column']?.toString(),
+          initialValue: pageAddViewModel!.pageModel.column.toString(),
           maxLength: 1,
-          onChanged: (value) => data['column'] = int.tryParse(value),
+          buildCounter: (context, {int? currentLength, bool? isFocused, maxLength}) => null,
+          onChanged: (value) => pageAddViewModel!.pageModel.column = int.tryParse(value) ?? 1,
         ),
-        ListView.separated(
-          itemCount: gridDataList.length,
+        const SizedBox(height: 24),
+        ReorderableListView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return GridPageItem(
-              dataModel: gridDataList[index],
-              editMode: true,
-            );
+          onReorder: (oldIndex, newIndex) {
+            _changeOrder(oldIndex: oldIndex, newIndex: newIndex);
           },
-          separatorBuilder: (context, index) {
-            return const SizedBox(
-              height: kVerticalPadding / 3,
+          // buildDefaultDragHandles: false,
+          children: List.generate(pageAddViewModel!.pageModel.data.length, (index) {
+            return Padding(
+              key: UniqueKey(),
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: GridPageItem(
+                key: UniqueKey(),
+                dataModel: pageAddViewModel!.pageModel.data[index],
+                editMode: true,
+                index: index,
+                // onDataChanged: (dataModel) {
+                //   //  deleted if dataModel is null
+                //   if (dataModel == null) {
+                //     setState(() {
+                //     pageAddViewModel!.pageModel.data.removeAt(index);
+                //   });
+                //   } else {
+                //     pageAddViewModel!.pageModel.data[index] = dataModel;
+                //   }
+                // },
+              ),
             );
-          },
+          }),
         ),
         TextButton.icon(
             onPressed: () {
               setState(() {
-                gridDataList.add(GridDataModel());
+                pageAddViewModel!.pageModel.data.add(GridDataModel());
               });
             },
             icon: const Icon(
@@ -67,5 +83,14 @@ class _GridTypePageState extends State<GridTypePage> {
             label: const Text('Ekle'))
       ],
     );
+  }
+
+  _changeOrder({required int oldIndex, required int newIndex}) {
+    if (newIndex >= pageAddViewModel!.pageModel.data.length) newIndex = pageAddViewModel!.pageModel.data.length-1;
+    if (newIndex == oldIndex) return;
+    setState(() {
+      var item = pageAddViewModel!.pageModel.data.removeAt(oldIndex);
+      pageAddViewModel!.pageModel.data.insert(newIndex, item);
+    });
   }
 }
