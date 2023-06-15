@@ -9,7 +9,7 @@ import 'text_field_counter.dart';
 
 class GridPageItem extends StatefulWidget {
   const GridPageItem({
-    required Key? key,
+    Key? key,
     required this.dataModel,
     this.editMode = false,
     required this.index,
@@ -45,10 +45,10 @@ class _GridPageItemState extends State<GridPageItem> {
         //   padding: EdgeInsets.all(8.0),
         //   child: Icon(Icons.drag_handle,),
         // ),),
-        if (widget.editMode)
+        if (widget.editMode && context.select<PageAddViewModel?, bool>((value) => (value?.pageModel.data.length ?? -1) > 1))
           IconButton(
             onPressed: () {
-              pageAddViewModel!.pageModel.data.removeAt(widget.index);
+              pageAddViewModel!.pageModel.removeDataFromList(widget.index);
               pageAddViewModel!.notifyChanges();
 
               // if (widget.onDataChanged != null) widget.onDataChanged!(null);
@@ -69,7 +69,7 @@ class _GridPageItemState extends State<GridPageItem> {
                 child: Padding(
                   padding: const EdgeInsets.all(kVerticalPadding / 3),
                   child: Icon(
-                    IconData(widget.dataModel.iconCodePoint ?? Icons.edit.codePoint, fontFamily: 'MaterialIcons'),
+                    IconData(widget.dataModel.iconCodePoint ?? (widget.editMode ? Icons.edit.codePoint : Icons.warning_amber_rounded.codePoint), fontFamily: 'MaterialIcons'),
                     color: (widget.editMode && widget.dataModel.iconCodePoint == null) ||
                             (!widget.editMode && widget.dataModel.iconCodePoint != null)
                         ? kPrimaryColor
@@ -106,6 +106,7 @@ class _GridPageItemState extends State<GridPageItem> {
                       buildCounter: buildTextFieldCounter,
                       onChanged: (value) {
                         widget.dataModel.title = value;
+                        pageAddViewModel!.notifyChanges();
                         // _notifyChanges();
                       },
                     ),
@@ -121,6 +122,7 @@ class _GridPageItemState extends State<GridPageItem> {
                       buildCounter: buildTextFieldCounter,
                       onChanged: (value) {
                         widget.dataModel.content = value;
+                        pageAddViewModel!.notifyChanges();
                         // _notifyChanges();
                       },
                     ),
@@ -128,6 +130,7 @@ class _GridPageItemState extends State<GridPageItem> {
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  // mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       widget.dataModel.title ?? '',
@@ -153,6 +156,7 @@ class _GridPageItemState extends State<GridPageItem> {
     if (iconData == null) return;
     setState(() {
       widget.dataModel.iconCodePoint = iconData.codePoint;
+      pageAddViewModel!.notifyChanges();
       // pageAddViewModel!.pageModel.data[]
     });
     // _notifyChanges();

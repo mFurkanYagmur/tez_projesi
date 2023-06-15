@@ -20,7 +20,7 @@ class _GridTypePageState extends State<GridTypePage> {
   @override
   Widget build(BuildContext context) {
     pageAddViewModel ??= context.read<PageAddViewModel>();
-    context.watch<PageAddViewModel>();
+    context.select<PageAddViewModel, dynamic>((value) => value.pageModel.data.length);
     return Column(
       children: [
         TextFormField(
@@ -37,25 +37,34 @@ class _GridTypePageState extends State<GridTypePage> {
           initialValue: pageAddViewModel!.pageModel.column.toString(),
           maxLength: 1,
           buildCounter: (context, {int? currentLength, bool? isFocused, maxLength}) => null,
-          onChanged: (value) => pageAddViewModel!.pageModel.column = int.tryParse(value) ?? 1,
+          onChanged: (value) {
+            pageAddViewModel!.pageModel.column = int.tryParse(value) ?? 1;
+            pageAddViewModel!.notifyChanges();
+          },
         ),
         const SizedBox(height: 24),
+        Align(
+            alignment: Alignment.centerLeft,
+            child: Text('Sayfa Öğeleri', style: Theme.of(context).textTheme.titleMedium,)),
+        const SizedBox(height: 16),
         ReorderableListView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           onReorder: (oldIndex, newIndex) {
             _changeOrder(oldIndex: oldIndex, newIndex: newIndex);
+            pageAddViewModel!.notifyChanges();
           },
           // buildDefaultDragHandles: false,
-          children: List.generate(pageAddViewModel!.pageModel.data.length, (index) {
+          children: context.select<PageAddViewModel, List>((value) => value.pageModel.data).map((e) {
+
             return Padding(
               key: UniqueKey(),
               padding: EdgeInsets.symmetric(vertical: 8),
               child: GridPageItem(
                 key: UniqueKey(),
-                dataModel: pageAddViewModel!.pageModel.data[index],
+                dataModel: e,
                 editMode: true,
-                index: index,
+                index: pageAddViewModel!.pageModel.data.indexOf(e),
                 // onDataChanged: (dataModel) {
                 //   //  deleted if dataModel is null
                 //   if (dataModel == null) {
@@ -68,19 +77,20 @@ class _GridTypePageState extends State<GridTypePage> {
                 // },
               ),
             );
-          }),
+          }).toList(),
         ),
         TextButton.icon(
             onPressed: () {
-              setState(() {
+              // setState(() {
                 pageAddViewModel!.pageModel.data.add(GridDataModel());
-              });
+                pageAddViewModel!.notifyChanges();
+              // });
             },
             icon: const Icon(
               Icons.add,
               color: kPrimaryColor,
             ),
-            label: const Text('Ekle'))
+            label: const Text('Öğe Ekle', style: TextStyle(color: kTextColor),))
       ],
     );
   }

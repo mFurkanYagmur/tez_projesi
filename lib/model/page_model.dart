@@ -1,3 +1,5 @@
+import 'package:mv_adayi_web_site/model/grid_data_model.dart';
+
 import '../enum/page_type.dart';
 
 class PageModel {
@@ -5,9 +7,11 @@ class PageModel {
   String? titleFront;
   String? titleBack;
   String? description;
-  PageType? type = PageType.grid;
+  PageType type = PageType.grid;
   int column = 1;
-  List data = [];
+  List data = [
+    GridDataModel(),
+  ];
   // Map<String, dynamic>? data;
 
   PageModel();
@@ -29,6 +33,11 @@ class PageModel {
   //   this.type,
   //   this.data = const [],
   // });
+
+  removeDataFromList(int index){
+    if (data.length<=1) return;
+    data.removeAt(index);
+  }
 
   Map toJson() => {
     'orderNumber': orderNumber,
