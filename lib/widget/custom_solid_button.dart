@@ -4,23 +4,30 @@ import 'package:mv_adayi_web_site/extensions.dart';
 import '../constants.dart';
 
 class CustomSolidButton extends StatelessWidget {
-  const CustomSolidButton({Key? key, required this.text, required this.onPressed}) : super(key: key);
+  const CustomSolidButton({Key? key, required this.text, required this.onPressed, this.bgFilled = true}) : super(key: key);
 
   final String text;
   final Function()? onPressed;
+  final bool bgFilled;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle(
-            color: Colors.white,
-          ),
-          shape: const StadiumBorder(),
-          backgroundColor: kPrimaryColor,
-          padding: const EdgeInsets.all(24)),
+        elevation: bgFilled ? null : 0,
+        shadowColor: bgFilled ? null : Colors.transparent,
+        surfaceTintColor: kPrimaryColor,
+        shape: const StadiumBorder(),
+        backgroundColor: bgFilled ? kPrimaryColor : Colors.transparent,
+        padding: const EdgeInsets.all(24),
+      ),
       onPressed: onPressed,
-      child: Text(text.toUpperCaseLocalized()),
+      child: Text(
+        text.toUpperCaseLocalized(),
+        style: TextStyle(
+          color: bgFilled ? Colors.white : kPrimaryColor,
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/typed_page/grid_typed_page.dart';
 import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/helper/ui_helper.dart';
 import 'package:mv_adayi_web_site/pages/grid_page.dart';
 import 'package:mv_adayi_web_site/widget/custom_solid_button.dart';
 import 'package:provider/provider.dart';
@@ -90,20 +91,36 @@ class _PageManagementPageState extends State<PageManagementPage> {
             padding: const EdgeInsets.symmetric(vertical: kVerticalPadding),
             child: _buildPreview(pageType),
           ),
-          CustomSolidButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    insetPadding: EdgeInsets.zero,
-                    child: SingleChildScrollView(child: _getPreviewPage(pageType)),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CustomSolidButton(
+                bgFilled: false,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        insetPadding: EdgeInsets.zero,
+                        child: SingleChildScrollView(child: _getPreviewPage(pageType)),
+                      );
+                    },
                   );
                 },
-              );
-            },
-            text: 'Tam Sayfa Önizle',
+                text: 'Tam Sayfa Önizle',
+              ),
+              SizedBox(width: kHorizontalPadding,),
+              CustomSolidButton(
+                onPressed: () {
+                  UIHelper.showSnackBar(context: context, text: 'Kaydediliyor...');
+                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Kaydediliyor...')));
+                },
+                text: 'Kaydet',
+              ),
+            ],
           ),
+
         ],
       ),
     );
