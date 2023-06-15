@@ -1,5 +1,6 @@
 import 'package:mv_adayi_web_site/model/data_model.dart';
 import 'package:mv_adayi_web_site/model/grid_data_model.dart';
+import 'package:mv_adayi_web_site/util/util.dart';
 
 import '../enum/page_type.dart';
 
@@ -13,6 +14,53 @@ class PageModel {
   List<DataModel> data = [
     GridDataModel(),
   ];
+
+  PageModel();
+
+  // PageModel.fillData({
+  //   required this.orderNumber,
+  //   required this.titleFront,
+  //   required this.titleBack,
+  //   required this.description,
+  //   required this.type,
+  //   required this.column,
+  //   required this.data,
+  // });
+
+  PageModel.fromMap(Map<String, dynamic> map) {
+    PageType? pageType = Util.convertStringToPageType(map['type'].toString());
+    if (pageType == null) {
+      throw Exception('Hatalı sayfa türü! ${map['type']}');
+    }
+
+    List<DataModel> dataList = (map['data'] as List).map((e) => e as Map).map((e) {
+      switch (pageType) {
+        case PageType.grid:
+          return GridDataModel.fromMap(e as Map<String, dynamic>);
+        case PageType.text:
+        case PageType.album:
+          return GridDataModel.fromMap(e as Map<String, dynamic>);
+      }
+    }).toList();
+
+    orderNumber = map['orderNumber'];
+    titleFront = map['titleFront'];
+    titleBack = map['titleBack'];
+    description = map['description'];
+    type = pageType;
+    column = map['column'];
+    data = dataList;
+
+    // return PageModel.fillData(
+    //   orderNumber: map['orderNumber'],
+    //   titleFront: map['titleFront'],
+    //   titleBack: map['titleBack'],
+    //   description: map['description'],
+    //   type: pageType,
+    //   column: map['column'],
+    //   data: dataList,
+    // );
+  }
 
   removeDataFromList(int index) {
     if (data.length <= 1) return;

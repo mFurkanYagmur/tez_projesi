@@ -4,7 +4,7 @@ import 'package:mv_adayi_web_site/model/grid_data_model.dart';
 import 'package:mv_adayi_web_site/util/validators.dart';
 import 'package:provider/provider.dart';
 
-import '../constants.dart';
+import '../util/constants.dart';
 import '../viewmodels/page_add_viewmodel.dart';
 import 'text_field_counter.dart';
 

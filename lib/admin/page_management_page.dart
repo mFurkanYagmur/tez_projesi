@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mv_adayi_web_site/admin/typed_page/grid_typed_page.dart';
-import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
 import 'package:mv_adayi_web_site/pages/grid_page.dart';
 import 'package:mv_adayi_web_site/util/validators.dart';

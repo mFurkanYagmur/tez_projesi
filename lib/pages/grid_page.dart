@@ -3,7 +3,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mv_adayi_web_site/model/grid_data_model.dart';
 import 'package:mv_adayi_web_site/widget/grid_page_item.dart';
 
-import '../constants.dart';
+import '../util/constants.dart';
 import '../model/page_model.dart';
 import '../widget/page_title.dart';
 

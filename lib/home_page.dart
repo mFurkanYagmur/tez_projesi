@@ -11,6 +11,7 @@ import 'package:mv_adayi_web_site/widget/footer.dart';
 import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import 'viewmodels/home_page_viewmodel.dart';
 import 'widget/top_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,9 +43,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     int pageLength = pages.length;
     List<GlobalKey> pageKeys = List.generate(pageLength, (index) => GlobalKey());
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       context.read<SelectedPageViewModel>().pageVisibility = List.generate(pages.length, (index) => false);
       context.read<SelectedPageViewModel>().pageKeys = pageKeys;
+
+      try {
+        await context.read<HomePageViewModel>().loadPages();
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     });
     for (int i = 0; i < pageLength; i++) {
       pages[i] = VisibilityDetector(
@@ -62,6 +69,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<HomePageViewModel>();
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(

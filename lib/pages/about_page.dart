@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/widget/custom_solid_button.dart';
 import 'package:mv_adayi_web_site/widget/page_title.dart';
 

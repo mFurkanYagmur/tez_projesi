@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mv_adayi_web_site/extensions.dart';
+import 'package:mv_adayi_web_site/util/extensions.dart';
 
-import '../constants.dart';
+import '../util/constants.dart';
 
 class CustomSolidButton extends StatelessWidget {
   const CustomSolidButton({Key? key, required this.text, required this.onPressed, this.bgFilled = true}) : super(key: key);

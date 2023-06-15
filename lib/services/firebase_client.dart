@@ -32,4 +32,11 @@ class FirebaseClient {
     await _firestore.collection('pages').add(pageModel.toJson());
     log('Sayfa Kaydedildi!');
   }
+
+  Future<List<PageModel>> getPages() async {
+    var result = await _firestore.collection('pages').orderBy('orderNumber').get();
+    log(result.toString());
+    List<PageModel> pages = result.docs.map((e) => PageModel.fromMap(e.data())).toList();
+    return pages;
+  }
 }

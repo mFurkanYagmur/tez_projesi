@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../util/constants.dart';
 
 class VizyonMisyonPage extends StatefulWidget {
   const VizyonMisyonPage({Key? key}) : super(key: key);

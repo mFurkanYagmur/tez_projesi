@@ -5,6 +5,14 @@ class GridDataModel extends DataModel {
   String? title;
   String? content;
 
+  GridDataModel();
+
+  GridDataModel.fromMap(Map<String, dynamic> map) {
+    iconCodePoint = map['iconCodePoint'];
+    title = map['title'];
+    content = map['content'];
+  }
+
   @override
   toJson() {
     return {

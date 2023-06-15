@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/edit_home_page.dart';
 import 'package:mv_adayi_web_site/admin/page_management_page.dart';
-import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
-import 'package:mv_adayi_web_site/routes.dart';
+import 'package:mv_adayi_web_site/util/routes.dart';
 
 import '../widget/logo.dart';
 

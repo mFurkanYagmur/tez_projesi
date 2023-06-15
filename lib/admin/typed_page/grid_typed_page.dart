@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mv_adayi_web_site/constants.dart';
+import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/viewmodels/page_add_viewmodel.dart';
 import 'package:mv_adayi_web_site/widget/grid_page_item.dart';
 import 'package:provider/provider.dart';

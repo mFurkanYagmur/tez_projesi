@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mv_adayi_web_site/constants.dart';
-import 'package:mv_adayi_web_site/extensions.dart';
+import 'package:mv_adayi_web_site/util/constants.dart';
+import 'package:mv_adayi_web_site/util/extensions.dart';
 
 class PageTitle extends StatelessWidget {
   const PageTitle({Key? key, required this.titleBack, required this.titleFront}) : super(key: key);
