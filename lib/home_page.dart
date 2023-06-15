@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:mv_adayi_web_site/helper/ui_helper.dart';
+import 'package:mv_adayi_web_site/model/page_model.dart';
 import 'package:mv_adayi_web_site/pages/about_page.dart';
 import 'package:mv_adayi_web_site/pages/contact_page.dart';
 import 'package:mv_adayi_web_site/pages/icraat_page.dart';
+import 'package:mv_adayi_web_site/pages/page_widget.dart';
 import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
 import 'package:mv_adayi_web_site/pages/vizyon_misyon_page.dart';
 import 'package:mv_adayi_web_site/pages/welcome_page.dart';
 import 'package:mv_adayi_web_site/viewmodels/selected_page_viewmodel.dart';
 import 'package:mv_adayi_web_site/widget/footer.dart';
+import 'package:mv_adayi_web_site/widget/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -38,6 +42,8 @@ class _HomePageState extends State<HomePage> {
     const ContactPage(),
   ];
 
+  HomePageViewModel? homePageViewModel;
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       context.read<SelectedPageViewModel>().pageKeys = pageKeys;
 
       try {
-        await context.read<HomePageViewModel>().loadPages();
+        await homePageViewModel!.loadPages();
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -69,28 +75,44 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    homePageViewModel ??= context.read<HomePageViewModel>();
     context.watch<HomePageViewModel>();
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            controller: HomePage.scrollController,
-            child: SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...pages,
-                  const Footer(),
-                ],
-              ),
+      body: FutureBuilder(
+          future: homePageViewModel!.listenPages(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return _buildPages();
+            } else if (snapshot.hasError) {
+              UIHelper.showSnackBar(
+                  context: context, text: 'Sayfa verileri alınırken bir hata meydana geldi!', type: UIType.danger);
+            }
+            return const LoadingWidget();
+          }),
+    );
+  }
+
+  Widget _buildPages() {
+    List<PageModel> pages = homePageViewModel!.pages;
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          controller: HomePage.scrollController,
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                WelcomePage(),
+                ...pages.map((e) => PageWidget(pageModel: e)).toList(),
+                const Footer(),
+              ],
             ),
           ),
-          //  top bar
-          TopBar(),
-        ],
-      ),
+        ),
+        TopBar(),
+      ],
     );
   }
 }
