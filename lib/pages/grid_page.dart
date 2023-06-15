@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:mv_adayi_web_site/model/grid_data_model.dart';
 import 'package:mv_adayi_web_site/widget/grid_page_item.dart';
 
 import '../constants.dart';
@@ -37,7 +38,7 @@ class GridPage extends StatelessWidget {
               mainAxisSpacing: kVerticalPadding,
               crossAxisSpacing: kHorizontalPadding,
               itemBuilder: (context, index) {
-                return GridPageItem(dataModel: pageModel.data[index], index: index);
+                return GridPageItem(dataModel: pageModel.data[index] as GridDataModel, index: index);
                 // return _buildItem(icraat: icraatList[index], context: context);
               },
             ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/typed_page/grid_typed_page.dart';
 import 'package:mv_adayi_web_site/constants.dart';
@@ -113,8 +115,8 @@ class _PageManagementPageState extends State<PageManagementPage> {
               SizedBox(width: kHorizontalPadding,),
               CustomSolidButton(
                 onPressed: () {
-                  UIHelper.showSnackBar(context: context, text: 'Kaydediliyor...');
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Kaydediliyor...')));
+                  UIHelper.showSnackBar(context: context, type: UIType.info, text: 'Kaydediliyor...');
+                  _save();
                 },
                 text: 'Kaydet',
               ),
@@ -181,6 +183,16 @@ class _PageManagementPageState extends State<PageManagementPage> {
       case PageType.text:
       default:
         return const SizedBox();
+    }
+  }
+
+  _save() async {
+    try {
+      await pageAddViewModel!.save();
+      UIHelper.showSnackBar(context: context, type: UIType.success, text: 'Sayfa kaydedildi!');
+    } catch (e) {
+      UIHelper.showSnackBar(context: context, type: UIType.danger, text: 'Bir hata meydana geldi. Sayfa kaydedilemedi!');
+      log('ERROR!: $e', error: e);
     }
   }
 }

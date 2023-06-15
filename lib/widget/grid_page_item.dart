@@ -118,7 +118,7 @@ class _GridPageItemState extends State<GridPageItem> {
                         labelText: 'İçerik',
                       ),
                       initialValue: widget.dataModel.content ?? '',
-                      maxLength: 100,
+                      maxLength: 200,
                       buildCounter: buildTextFieldCounter,
                       onChanged: (value) {
                         widget.dataModel.content = value;
