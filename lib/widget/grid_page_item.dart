@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:mv_adayi_web_site/model/grid_data_model.dart';
+import 'package:mv_adayi_web_site/util/validators.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
@@ -55,41 +56,60 @@ class _GridPageItemState extends State<GridPageItem> {
             },
             icon: const Icon(Icons.delete, color: Colors.redAccent),
           ),
-        Stack(
-          children: [
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: iconBorderRadius),
-              child: InkWell(
-                onTap: !widget.editMode
-                    ? null
-                    : () {
-                        _pickIcon();
-                      },
-                borderRadius: iconBorderRadius,
-                child: Padding(
-                  padding: const EdgeInsets.all(kVerticalPadding / 3),
-                  child: Icon(
-                    IconData(widget.dataModel.iconCodePoint ?? (widget.editMode ? Icons.edit.codePoint : Icons.warning_amber_rounded.codePoint), fontFamily: 'MaterialIcons'),
-                    color: (widget.editMode && widget.dataModel.iconCodePoint == null) ||
-                            (!widget.editMode && widget.dataModel.iconCodePoint != null)
-                        ? kPrimaryColor
-                        : kTextLightColor,
-                    size: 30,
-                  ),
+        FormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            if (widget.dataModel.iconCodePoint == null) return 'Lütfen bir ikon seçiniz.';
+            return null;
+          },
+          builder: (field) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(borderRadius: iconBorderRadius, side: !field.hasError ? BorderSide.none : BorderSide(
+                        color: Colors.red,
+                        width: 1,
+                      )),
+                      child: InkWell(
+                        onTap: !widget.editMode
+                            ? null
+                            : () {
+                          _pickIcon();
+                        },
+                        borderRadius: iconBorderRadius,
+                        child: Padding(
+                          padding: const EdgeInsets.all(kVerticalPadding / 3),
+                          child: Icon(
+                            IconData(widget.dataModel.iconCodePoint ?? (widget.editMode ? Icons.edit.codePoint : Icons.warning_amber_rounded.codePoint), fontFamily: 'MaterialIcons'),
+                            color: (widget.editMode && widget.dataModel.iconCodePoint == null) ||
+                                (!widget.editMode && widget.dataModel.iconCodePoint != null)
+                                ? kPrimaryColor
+                                : kTextLightColor,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (widget.editMode)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Icon(
+                          widget.dataModel.iconCodePoint == null ? null : Icons.edit,
+                          color: kPrimaryColor,
+                          // size: 16,
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-            ),
-            if (widget.editMode)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Icon(
-                  widget.dataModel.iconCodePoint == null ? null : Icons.edit,
-                  color: kPrimaryColor,
-                  // size: 16,
-                ),
-              ),
-          ],
+                if (field.hasError) Text(field.errorText ?? '', style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.red),)
+              ],
+            );
+          },
         ),
         const SizedBox(width: kHorizontalPadding / 3),
         Expanded(
@@ -104,6 +124,8 @@ class _GridPageItemState extends State<GridPageItem> {
                       initialValue: widget.dataModel.title ?? '',
                       maxLength: 40,
                       buildCounter: buildTextFieldCounter,
+                      validator: Validators.requiredTextValidator,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       onChanged: (value) {
                         widget.dataModel.title = value;
                         pageAddViewModel!.notifyChanges();
@@ -120,6 +142,8 @@ class _GridPageItemState extends State<GridPageItem> {
                       initialValue: widget.dataModel.content ?? '',
                       maxLength: 200,
                       buildCounter: buildTextFieldCounter,
+                      validator: Validators.requiredTextValidator,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       onChanged: (value) {
                         widget.dataModel.content = value;
                         pageAddViewModel!.notifyChanges();

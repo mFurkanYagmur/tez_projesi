@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mv_adayi_web_site/admin/typed_page/grid_typed_page.dart';
 import 'package:mv_adayi_web_site/constants.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
 import 'package:mv_adayi_web_site/pages/grid_page.dart';
+import 'package:mv_adayi_web_site/util/validators.dart';
 import 'package:mv_adayi_web_site/widget/custom_solid_button.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +24,8 @@ class _PageManagementPageState extends State<PageManagementPage> {
   double itemVerticalSpace = kVerticalPadding / 3;
   PageAddViewModel? pageAddViewModel;
 
+  final GlobalKey<FormState> _formKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     pageAddViewModel ??= context.read<PageAddViewModel>();
@@ -32,98 +36,137 @@ class _PageManagementPageState extends State<PageManagementPage> {
         vertical: kVerticalPadding,
         horizontal: kHorizontalPadding,
       ),
-      child: Column(
-        children: [
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Sıra Numarası'),
-            keyboardType: const TextInputType.numberWithOptions(),
-            initialValue: pageAddViewModel!.pageModel.orderNumber?.toString(),
-            onChanged: (value) {
-              pageAddViewModel!.pageModel.orderNumber = int.tryParse(value);
-              pageAddViewModel!.notifyChanges();
-            },
-          ),
-          SizedBox(height: itemVerticalSpace),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Başlık (Ön)'),
-            initialValue: pageAddViewModel!.pageModel.titleFront,
-            onChanged: (value) {
-              pageAddViewModel!.pageModel.titleFront = value;
-              pageAddViewModel!.notifyChanges();
-            },
-          ),
-          SizedBox(height: itemVerticalSpace),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Başlık (Arka)'),
-            initialValue: pageAddViewModel!.pageModel.titleBack,
-            onChanged: (value) {
-              pageAddViewModel!.pageModel.titleBack = value;
-              pageAddViewModel!.notifyChanges();
-            },
-          ),
-          SizedBox(height: itemVerticalSpace),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Açıklama'),
-            initialValue: pageAddViewModel!.pageModel.description,
-            onChanged: (value) {
-              pageAddViewModel!.pageModel.description = value;
-              pageAddViewModel!.notifyChanges();
-            },
-          ),
-          SizedBox(height: itemVerticalSpace),
-          DropdownButtonFormField<PageType>(
-            value: pageType,
-            decoration: const InputDecoration(labelText: 'Sayfa Tipi'),
-            items: PageType.values.map<DropdownMenuItem<PageType>>((e) {
-              return DropdownMenuItem(
-                value: e,
-                child: Text(e.getTitle()),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                pageAddViewModel!.pageModel.type = value ?? PageType.grid;
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Sıra Numarası'),
+              keyboardType: const TextInputType.numberWithOptions(),
+              initialValue: pageAddViewModel!.pageModel.orderNumber?.toString(),
+              validator: Validators.requiredTextValidator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onChanged: (value) {
+                pageAddViewModel!.pageModel.orderNumber = int.tryParse(value);
                 pageAddViewModel!.notifyChanges();
-              });
-            },
-          ),
-          Divider(height: itemVerticalSpace * 2),
-          _buildAddPage(pageType),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: kVerticalPadding),
-            child: _buildPreview(pageType),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomSolidButton(
-                bgFilled: false,
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        insetPadding: EdgeInsets.zero,
-                        child: SingleChildScrollView(child: _getPreviewPage(pageType)),
-                      );
-                    },
-                  );
-                },
-                text: 'Tam Sayfa Önizle',
-              ),
-              SizedBox(width: kHorizontalPadding,),
-              CustomSolidButton(
-                onPressed: () {
-                  UIHelper.showSnackBar(context: context, type: UIType.info, text: 'Kaydediliyor...');
-                  _save();
-                },
-                text: 'Kaydet',
-              ),
-            ],
-          ),
+              },
+            ),
+            SizedBox(height: itemVerticalSpace),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Başlık (Ön)'),
+              initialValue: pageAddViewModel!.pageModel.titleFront,
+              validator: Validators.requiredTextValidator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onChanged: (value) {
+                pageAddViewModel!.pageModel.titleFront = value;
+                pageAddViewModel!.notifyChanges();
+              },
+            ),
+            SizedBox(height: itemVerticalSpace),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Başlık (Arka)'),
+              initialValue: pageAddViewModel!.pageModel.titleBack,
+              validator: Validators.requiredTextValidator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onChanged: (value) {
+                pageAddViewModel!.pageModel.titleBack = value;
+                pageAddViewModel!.notifyChanges();
+              },
+            ),
+            SizedBox(height: itemVerticalSpace),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Açıklama'),
+              initialValue: pageAddViewModel!.pageModel.description,
+              onChanged: (value) {
+                pageAddViewModel!.pageModel.description = value;
+                pageAddViewModel!.notifyChanges();
+              },
+            ),
+            SizedBox(height: itemVerticalSpace),
+            DropdownButtonFormField<PageType>(
+              value: pageType,
+              decoration: const InputDecoration(labelText: 'Sayfa Tipi'),
+              items: PageType.values.map<DropdownMenuItem<PageType>>((e) {
+                return DropdownMenuItem(
+                  value: e,
+                  child: Text(e.getTitle()),
+                );
+              }).toList(),
+              validator: (value) {
+                if (value == null) return 'Lütfen sayfa tipi seçiniz.';
+                return null;
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onChanged: (value) {
+                setState(() {
+                  pageAddViewModel!.pageModel.type = value ?? PageType.grid;
+                  pageAddViewModel!.notifyChanges();
+                });
+              },
+            ),
+            Divider(height: itemVerticalSpace * 2),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Kolon Sayısı'),
+              keyboardType: const TextInputType.numberWithOptions(),
+              inputFormatters: [
+                TextInputFormatter.withFunction((oldValue, newValue) {
+                  if ((int.tryParse(newValue.text) ?? -1) > 3) {
+                    return newValue.copyWith(text: '3', selection: const TextSelection.collapsed(offset: 1));
+                  }
+                  return newValue;
+                }),
+              ],
+              initialValue: pageAddViewModel!.pageModel.column.toString(),
+              maxLength: 1,
+              buildCounter: (context, {int? currentLength, bool? isFocused, maxLength}) => null,
+              validator: Validators.numberValidator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onChanged: (value) {
+                pageAddViewModel!.pageModel.column = int.tryParse(value) ?? 1;
+                pageAddViewModel!.notifyChanges();
+              },
+            ),
+            const SizedBox(height: 24),
+            _buildAddPage(pageType),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: kVerticalPadding),
+              child: _buildPreview(pageType),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CustomSolidButton(
+                  bgFilled: false,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          insetPadding: EdgeInsets.zero,
+                          child: SingleChildScrollView(child: _getPreviewPage(pageType)),
+                        );
+                      },
+                    );
+                  },
+                  text: 'Tam Sayfa Önizle',
+                ),
+                SizedBox(width: kHorizontalPadding,),
+                CustomSolidButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      UIHelper.showSnackBar(context: context, type: UIType.info, text: 'Kaydediliyor...');
+                      _save();
+                    }
+                  },
+                  text: 'Kaydet',
+                ),
+              ],
+            ),
 
-        ],
+          ],
+        ),
       ),
     );
   }

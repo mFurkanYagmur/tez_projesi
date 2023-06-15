@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mv_adayi_web_site/constants.dart';
 import 'package:mv_adayi_web_site/viewmodels/page_add_viewmodel.dart';
 import 'package:mv_adayi_web_site/widget/grid_page_item.dart';
@@ -23,29 +22,12 @@ class _GridTypePageState extends State<GridTypePage> {
     context.select<PageAddViewModel, dynamic>((value) => value.pageModel.data.length);
     return Column(
       children: [
-        TextFormField(
-          decoration: const InputDecoration(labelText: 'Kolon Sayısı'),
-          keyboardType: const TextInputType.numberWithOptions(),
-          inputFormatters: [
-            TextInputFormatter.withFunction((oldValue, newValue) {
-              if ((int.tryParse(newValue.text) ?? -1) > 3) {
-                return newValue.copyWith(text: '3', selection: const TextSelection.collapsed(offset: 1));
-              }
-              return newValue;
-            }),
-          ],
-          initialValue: pageAddViewModel!.pageModel.column.toString(),
-          maxLength: 1,
-          buildCounter: (context, {int? currentLength, bool? isFocused, maxLength}) => null,
-          onChanged: (value) {
-            pageAddViewModel!.pageModel.column = int.tryParse(value) ?? 1;
-            pageAddViewModel!.notifyChanges();
-          },
-        ),
-        const SizedBox(height: 24),
         Align(
             alignment: Alignment.centerLeft,
-            child: Text('Sayfa Öğeleri', style: Theme.of(context).textTheme.titleMedium,)),
+            child: Text(
+              'Sayfa Öğeleri',
+              style: Theme.of(context).textTheme.titleMedium,
+            )),
         const SizedBox(height: 16),
         ReorderableListView(
           shrinkWrap: true,
@@ -56,7 +38,6 @@ class _GridTypePageState extends State<GridTypePage> {
           },
           // buildDefaultDragHandles: false,
           children: context.select<PageAddViewModel, List>((value) => value.pageModel.data).map((e) {
-
             return Padding(
               key: UniqueKey(),
               padding: EdgeInsets.symmetric(vertical: 8),
@@ -82,21 +63,24 @@ class _GridTypePageState extends State<GridTypePage> {
         TextButton.icon(
             onPressed: () {
               // setState(() {
-                pageAddViewModel!.pageModel.data.add(GridDataModel());
-                pageAddViewModel!.notifyChanges();
+              pageAddViewModel!.pageModel.data.add(GridDataModel());
+              pageAddViewModel!.notifyChanges();
               // });
             },
             icon: const Icon(
               Icons.add,
               color: kPrimaryColor,
             ),
-            label: const Text('Öğe Ekle', style: TextStyle(color: kTextColor),))
+            label: const Text(
+              'Öğe Ekle',
+              style: TextStyle(color: kTextColor),
+            ))
       ],
     );
   }
 
   _changeOrder({required int oldIndex, required int newIndex}) {
-    if (newIndex >= pageAddViewModel!.pageModel.data.length) newIndex = pageAddViewModel!.pageModel.data.length-1;
+    if (newIndex >= pageAddViewModel!.pageModel.data.length) newIndex = pageAddViewModel!.pageModel.data.length - 1;
     if (newIndex == oldIndex) return;
     setState(() {
       var item = pageAddViewModel!.pageModel.data.removeAt(oldIndex);
