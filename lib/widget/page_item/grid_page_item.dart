@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
-import 'package:mv_adayi_web_site/model/grid_data_model.dart';
+import 'package:mv_adayi_web_site/model/data_model/grid_data_model.dart';
 import 'package:mv_adayi_web_site/util/validators.dart';
 import 'package:provider/provider.dart';
 
-import '../util/constants.dart';
-import '../viewmodels/page_add_viewmodel.dart';
-import 'text_field_counter.dart';
+import '../../util/constants.dart';
+import '../../viewmodels/page_add_viewmodel.dart';
+import '../text_field_counter.dart';
 
 class GridPageItem extends StatefulWidget {
   const GridPageItem({
-    Key? key,
+    super.key,
     required this.dataModel,
     this.editMode = false,
     required this.index,
-  }) : super(key: key);
+  });
 
   final GridDataModel dataModel;
   final bool editMode;

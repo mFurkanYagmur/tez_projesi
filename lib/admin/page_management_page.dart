@@ -2,12 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mv_adayi_web_site/admin/typed_page/grid_typed_page.dart';
-import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
-import 'package:mv_adayi_web_site/pages/grid_page.dart';
+import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/util/validators.dart';
 import 'package:mv_adayi_web_site/widget/custom_solid_button.dart';
+import 'package:mv_adayi_web_site/widget/reorderable_data_list.dart';
 import 'package:provider/provider.dart';
 
 import '../enum/page_type.dart';
@@ -29,7 +28,6 @@ class _PageManagementPageState extends State<PageManagementPage> {
   @override
   Widget build(BuildContext context) {
     pageAddViewModel ??= context.read<PageAddViewModel>();
-    context.watch<PageAddViewModel>();
     PageType? pageType = pageAddViewModel!.pageModel.type;
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -89,7 +87,7 @@ class _PageManagementPageState extends State<PageManagementPage> {
               items: PageType.values.map<DropdownMenuItem<PageType>>((e) {
                 return DropdownMenuItem(
                   value: e,
-                  child: Text(e.getTitle()),
+                  child: Text(e.getInfo().title),
                 );
               }).toList(),
               validator: (value) {
@@ -98,36 +96,42 @@ class _PageManagementPageState extends State<PageManagementPage> {
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (value) {
+                if (pageAddViewModel!.pageModel.type == value || value == null) return;
                 setState(() {
-                  pageAddViewModel!.pageModel.type = value ?? PageType.grid;
+                  pageAddViewModel!.pageModel.type = value;
+                  pageAddViewModel!.pageModel.data = [value.getInfo().createDataModel()];
                   pageAddViewModel!.notifyChanges();
                 });
               },
             ),
             Divider(height: itemVerticalSpace * 2),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Kolon Sayısı'),
-              keyboardType: const TextInputType.numberWithOptions(),
-              inputFormatters: [
-                TextInputFormatter.withFunction((oldValue, newValue) {
-                  if ((int.tryParse(newValue.text) ?? -1) > 3) {
-                    return newValue.copyWith(text: '3', selection: const TextSelection.collapsed(offset: 1));
-                  }
-                  return newValue;
-                }),
-              ],
-              initialValue: pageAddViewModel!.pageModel.column.toString(),
-              maxLength: 1,
-              buildCounter: (context, {int? currentLength, bool? isFocused, maxLength}) => null,
-              validator: Validators.numberValidator,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              onChanged: (value) {
-                pageAddViewModel!.pageModel.column = int.tryParse(value) ?? 1;
-                pageAddViewModel!.notifyChanges();
-              },
-            ),
+            Builder(builder: (context) {
+              var pageType = context.select<PageAddViewModel, PageType>((value) => value.pageModel.type);
+              return TextFormField(
+                enabled: pageType != PageType.text,
+                decoration: const InputDecoration(labelText: 'Kolon Sayısı'),
+                keyboardType: const TextInputType.numberWithOptions(),
+                inputFormatters: [
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    if ((int.tryParse(newValue.text) ?? -1) > 3) {
+                      return newValue.copyWith(text: '3', selection: const TextSelection.collapsed(offset: 1));
+                    }
+                    return newValue;
+                  }),
+                ],
+                initialValue: pageAddViewModel!.pageModel.column.toString(),
+                maxLength: 1,
+                buildCounter: (context, {int? currentLength, bool? isFocused, maxLength}) => null,
+                validator: Validators.numberValidator,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                onChanged: (value) {
+                  pageAddViewModel!.pageModel.column = int.tryParse(value) ?? 1;
+                  pageAddViewModel!.notifyChanges();
+                },
+              );
+            }),
             const SizedBox(height: 24),
-            _buildAddPage(pageType),
+            ReorderableDataList(pageType: pageType),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: kVerticalPadding),
               child: _buildPreview(pageType),
@@ -144,14 +148,18 @@ class _PageManagementPageState extends State<PageManagementPage> {
                       builder: (context) {
                         return Dialog(
                           insetPadding: EdgeInsets.zero,
-                          child: SingleChildScrollView(child: _getPreviewPage(pageType)),
+                          child: SingleChildScrollView(
+                            child: pageType.getInfo().page(pageAddViewModel!.pageModel),
+                          ),
                         );
                       },
                     );
                   },
                   text: 'Tam Sayfa Önizle',
                 ),
-                SizedBox(width: kHorizontalPadding,),
+                SizedBox(
+                  width: kHorizontalPadding,
+                ),
                 CustomSolidButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
@@ -164,69 +172,46 @@ class _PageManagementPageState extends State<PageManagementPage> {
                 ),
               ],
             ),
-
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAddPage(PageType pageType) {
-    return Builder(
-      builder: (context) {
-        switch (pageType) {
-          case PageType.grid:
-            return const GridTypePage();
-          case PageType.album:
-          case PageType.text:
-          default:
-            return const SizedBox();
-        }
-      },
-    );
-  }
-
   Widget _buildPreview(PageType pageType) {
-    return Column(
-      children: [
-        Text(
-          'Canlı Önizleme',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        SizedBox(
-          height: kVerticalPadding / 2,
-        ),
-        Builder(
-          builder: (context) {
-            switch (pageType) {
-              case PageType.grid:
-                return GridPage(pageModel: pageAddViewModel!.pageModel);
-              case PageType.album:
-              case PageType.text:
-              default:
-                return const SizedBox();
-            }
-          },
-        ),
-        Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              '*Gerçek boyutlarda önizleme için "Tam Sayfa Önizle" aracını kullanın.',
-              style: Theme.of(context).textTheme.bodySmall,
-            )),
-      ],
-    );
-  }
-
-  Widget _getPreviewPage(PageType pageType) {
-    switch (pageType) {
-      case PageType.grid:
-        return GridPage(pageModel: pageAddViewModel!.pageModel);
-      case PageType.album:
-      case PageType.text:
-      default:
-        return const SizedBox();
-    }
+    return Builder(builder: (context) {
+      context.watch<PageAddViewModel>();
+      return Column(
+        children: [
+          Text(
+            'Canlı Önizleme',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          SizedBox(
+            height: kVerticalPadding / 2,
+          ),
+          pageType.getInfo().page(pageAddViewModel!.pageModel),
+          // Builder(
+          //   builder: (context) {
+          //     switch (pageType) {
+          //       case PageType.grid:
+          //         return GridPage(pageModel: pageAddViewModel!.pageModel);
+          //       case PageType.album:
+          //       case PageType.text:
+          //       default:
+          //         return const SizedBox();
+          //     }
+          //   },
+          // ),
+          Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '*Gerçek boyutlarda önizleme için "Tam Sayfa Önizle" aracını kullanın.',
+                style: Theme.of(context).textTheme.bodySmall,
+              )),
+        ],
+      );
+    });
   }
 
   _save() async {

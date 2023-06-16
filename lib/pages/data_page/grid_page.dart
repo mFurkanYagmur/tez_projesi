@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:mv_adayi_web_site/model/grid_data_model.dart';
-import 'package:mv_adayi_web_site/widget/grid_page_item.dart';
+import 'package:mv_adayi_web_site/model/data_model/grid_data_model.dart';
+import 'package:mv_adayi_web_site/widget/page_item/grid_page_item.dart';
 
-import '../util/constants.dart';
-import '../model/page_model.dart';
-import '../widget/page_title.dart';
+import '../../util/constants.dart';
+import '../../model/page_model.dart';
+import '../../widget/page_title.dart';
 
 class GridPage extends StatelessWidget {
   const GridPage({super.key, required this.pageModel});
