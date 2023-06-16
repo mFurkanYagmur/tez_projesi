@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mv_adayi_web_site/model/data_model/album_data_model.dart';
 import 'package:mv_adayi_web_site/model/data_model/grid_data_model.dart';
 import 'package:mv_adayi_web_site/model/data_model/text_data_model.dart';
 import 'package:mv_adayi_web_site/model/page_model.dart';
+import 'package:mv_adayi_web_site/pages/data_page/album_page.dart';
 import 'package:mv_adayi_web_site/pages/data_page/grid_page.dart';
 import 'package:mv_adayi_web_site/pages/data_page/text_page.dart';
+import 'package:mv_adayi_web_site/widget/page_item/album_page_item.dart';
 import 'package:mv_adayi_web_site/widget/page_item/grid_page_item.dart';
 import 'package:mv_adayi_web_site/widget/page_item/text_page_item.dart';
 
@@ -42,12 +45,12 @@ extension PageTypeExtension on PageType {
         return PageTypeClass(
           title: 'Albüm',
           pageItem: (dataModel, index, [editMode]) {
-            return GridPageItem(dataModel: dataModel as GridDataModel, editMode: editMode ?? false, index: index);
+            return AlbumPageItem(dataModel: dataModel as AlbumDataModel, editMode: editMode ?? false, index: index);
           },
           page: (pageModel) {
-            return GridPage(pageModel: pageModel);
+            return AlbumPage(pageModel: pageModel);
           },
-          createDataModel: () => GridDataModel(),
+          createDataModel: () => AlbumDataModel(),
         );
       case PageType.text:
         return PageTypeClass(

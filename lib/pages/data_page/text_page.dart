@@ -4,6 +4,7 @@ import 'package:mv_adayi_web_site/widget/page_item/text_page_item.dart';
 
 import '../../model/page_model.dart';
 import '../../util/constants.dart';
+import '../../widget/page_title.dart';
 
 class TextPage extends StatelessWidget {
   const TextPage({super.key, required this.pageModel});
@@ -17,6 +18,10 @@ class TextPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: kVerticalPadding, horizontal: kHorizontalPadding),
       child: Column(
         children: [
+          if (pageModel.titleFront != null || pageModel.titleBack != null) PageTitle(
+            titleBack: pageModel.titleBack ?? '',
+            titleFront: pageModel.titleFront ?? '',
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kVerticalPadding, horizontal: kHorizontalPadding),
             child: Flex(

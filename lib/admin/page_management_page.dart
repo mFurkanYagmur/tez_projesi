@@ -53,7 +53,7 @@ class _PageManagementPageState extends State<PageManagementPage> {
             TextFormField(
               decoration: const InputDecoration(labelText: 'Başlık (Ön)'),
               initialValue: pageAddViewModel!.pageModel.titleFront,
-              validator: Validators.requiredTextValidator,
+              validator: context.select<PageAddViewModel, PageType>((value) => value.pageModel.type) == PageType.text ? (value) => null : Validators.requiredTextValidator,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (value) {
                 pageAddViewModel!.pageModel.titleFront = value;
@@ -64,7 +64,7 @@ class _PageManagementPageState extends State<PageManagementPage> {
             TextFormField(
               decoration: const InputDecoration(labelText: 'Başlık (Arka)'),
               initialValue: pageAddViewModel!.pageModel.titleBack,
-              validator: Validators.requiredTextValidator,
+              validator: context.select<PageAddViewModel, PageType>((value) => value.pageModel.type) == PageType.text ? (value) => null : Validators.requiredTextValidator,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (value) {
                 pageAddViewModel!.pageModel.titleBack = value;

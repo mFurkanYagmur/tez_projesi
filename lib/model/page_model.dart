@@ -1,8 +1,10 @@
 import 'package:mv_adayi_web_site/model/data_model/data_model.dart';
 import 'package:mv_adayi_web_site/model/data_model/grid_data_model.dart';
+import 'package:mv_adayi_web_site/model/data_model/text_data_model.dart';
 import 'package:mv_adayi_web_site/util/util.dart';
 
 import '../enum/page_type.dart';
+import 'data_model/album_data_model.dart';
 
 class PageModel {
   int? orderNumber;
@@ -26,11 +28,11 @@ class PageModel {
     List<DataModel> dataList = (map['data'] as List).map((e) => e as Map).map((e) {
       switch (pageType) {
         case PageType.grid:
-          //  TODO: move this code to enum.PageType
           return GridDataModel.fromMap(e as Map<String, dynamic>);
         case PageType.text:
+          return TextDataModel.fromMap(e as Map<String, dynamic>);
         case PageType.album:
-          return GridDataModel.fromMap(e as Map<String, dynamic>);
+          return AlbumDataModel.fromMap(e as Map<String, dynamic>);
       }
     }).toList();
 
