@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mv_adayi_web_site/model/data_model/album_data_model.dart';
@@ -40,34 +42,36 @@ class _AlbumPageState extends State<AlbumPage> {
               scrollDirection: Axis.vertical,
               mainAxisSpacing: kVerticalPadding,
               crossAxisSpacing: kHorizontalPadding,
-              itemCount: widget.pageModel.data.length,
+              itemCount: widget.pageModel.data.length + _getResizedColumnCount(),
               crossAxisCount: widget.pageModel.column,
               itemBuilder: (context, index) {
+                if (index < widget.pageModel.column && index % 2 == 1) {
+                  return SizedBox(height: max(0, 100.0 - (15*widget.pageModel.column)),/*50 + (Random().nextDouble()*50),*/);
+                }
                 return AlbumPageItem(
-                  dataModel: widget.pageModel.data[index] as AlbumDataModel,
+                  dataModel: widget.pageModel.data[_getDataIndex(index)] as AlbumDataModel,
                   index: index,
                 );
               },
-            ), /*GridView.custom(
-              gridDelegate: SliverWovenGridDelegate.count(
-                crossAxisCount: 2,
-                pattern: [
-                  WovenGridTile(4/1),
-                ],
-                mainAxisSpacing: kVerticalPadding,
-                crossAxisSpacing: kHorizontalPadding,
-              ),
-              semanticChildCount: imageUrls.length,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              childrenDelegate: SliverChildBuilderDelegate((context, index) {
-                return Image.network(imageUrls[index]);
-              }),
-            ),*/
+            ),
           ),
         ],
       ),
     );
+  }
+
+  // int _getItemCount() => widget.pageModel.data.length + (widget.pageModel.column.toDouble() / 2.0).floor();
+
+  int _getResizedColumnCount() => (widget.pageModel.column.toDouble() / 2.0).floor();
+
+  int _getDataIndex(int index) {
+    int dataIndex;
+    int column = widget.pageModel.column;
+    if (index < column) {
+      dataIndex = index - (index.toDouble()/2.0).floor();
+    } else {
+      dataIndex = index - _getResizedColumnCount();
+    }
+    return dataIndex;
   }
 }
