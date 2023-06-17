@@ -13,8 +13,10 @@ class TextPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
-      color: kLigthGreyBGColor,
+      width: size.width,
+      // color: kLigthGreyBGColor,
       padding: const EdgeInsets.symmetric(vertical: kVerticalPadding, horizontal: kHorizontalPadding),
       child: Column(
         children: [

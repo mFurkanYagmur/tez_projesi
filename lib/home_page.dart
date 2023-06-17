@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:mv_adayi_web_site/enum/page_type.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
 import 'package:mv_adayi_web_site/model/page_model.dart';
 import 'package:mv_adayi_web_site/pages/about_page.dart';
 import 'package:mv_adayi_web_site/pages/contact_page.dart';
+import 'package:mv_adayi_web_site/pages/data_page/data_page.dart';
 import 'package:mv_adayi_web_site/pages/icraat_page.dart';
 import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
 import 'package:mv_adayi_web_site/pages/vizyon_misyon_page.dart';
@@ -105,7 +105,9 @@ class _HomePageState extends State<HomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 WelcomePage(),
-                ...pages.map((e) => e.type.getInfo().page(e)).toList(),
+                for (int i=0; i<pages.length; i++)
+                DataPage(pageModel: pages[i], sameAsFooter: ((pages.length-i) %2 == 0),),
+                //...pages,
                 const Footer(),
               ],
             ),

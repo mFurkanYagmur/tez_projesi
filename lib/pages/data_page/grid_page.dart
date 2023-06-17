@@ -17,7 +17,7 @@ class GridPage extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
-      color: kLigthGreyBGColor,
+      // color: kLigthGreyBGColor,
       padding: const EdgeInsets.symmetric(
         vertical: kVerticalPadding,
         horizontal: kHorizontalPadding,

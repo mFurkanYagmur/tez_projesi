@@ -19,7 +19,9 @@ class AlbumPage extends StatefulWidget {
 class _AlbumPageState extends State<AlbumPage> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final Size size = MediaQuery.of(context).size;
+    return Container(
+      width: size.width,
       padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding, vertical: kVerticalPadding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
