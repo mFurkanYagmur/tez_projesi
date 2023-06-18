@@ -9,7 +9,7 @@ class SliderContentModel {
   SliderContentModel.fromMap(Map<String, dynamic> map) {
     beforeSliderText = map['beforeSliderText'];
     afterSliderText = map['afterSliderText'];
-    sliderContent = map['sliderContent'];
+    sliderContent = (map['sliderContent'] as List).map((e) => e as String).toList();
     partiUrl = map['partiUrl'];
   }
 

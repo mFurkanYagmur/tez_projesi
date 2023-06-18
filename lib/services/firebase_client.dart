@@ -38,6 +38,12 @@ class FirebaseClient {
     log('Sayfa Kaydedildi!');
   }
 
+  Future<Map<String, dynamic>> getData({required String collectionPath, required String documentName}) async {
+    var result = await _firestore.collection(collectionPath).doc(documentName).get();
+    log(result.toString());
+    return result.data() ?? {};
+  }
+
   Future<List<PageModel>> getPages() async {
     var result = await _firestore.collection('pages').orderBy('orderNumber').get();
     log(result.toString());
