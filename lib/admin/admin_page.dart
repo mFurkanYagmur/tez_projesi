@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/edit_home_page.dart';
 import 'package:mv_adayi_web_site/admin/page_management_page.dart';
-import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
+import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/util/routes.dart';
 
 import '../widget/logo.dart';
@@ -16,16 +16,17 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   late Size size;
-  int selectedPage = 3;
+  int selectedPage = 0;
   PageController pageController = PageController();
 
   List<MenuModel> menuList = [
     MenuModel(
-        title: 'Ana Sayfa',
-        description: 'Ana sayfayı düzenleyin.',
-        selectedIcon: Icons.home,
-        unselectedIcon: Icons.home_outlined,
-        page: const EditHomePage()),
+      title: 'Ana Sayfa',
+      description: 'Ana sayfayı düzenleyin.',
+      selectedIcon: Icons.home,
+      unselectedIcon: Icons.home_outlined,
+      page: const EditHomePage(),
+    ),
     MenuModel(
         title: 'Özgeçmiş',
         description: 'Özgeçmiş bilgilerinizi ve CV\'nizi güncelleyin.',

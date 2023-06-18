@@ -23,13 +23,18 @@ class FirebaseClient {
     'title_back': '150 Günlük Plan',
     'description':
         'Seçildiğimiz takdirde görevi devraldığımız günden itibaren ilk 150 gün içerisinde yürürlüğe koyacağımız değişiklikler.',
-    'type': PageType.grid.name,
+    'type': DataType.grid.name,
     'column': 2,
     'data': [],
   };
 
-  Future savePage({required PageModel pageModel}) async {
-    await _firestore.collection('pages').add(pageModel.toJson());
+  Future saveData({required Map<String, dynamic> data, required String collectionPath, String? documentName}) async {
+    if (documentName != null) {
+      await _firestore.collection(collectionPath).doc(documentName).set(data);
+    } else {
+      await _firestore.collection(collectionPath).add(data);
+    }
+    // await _firestore.collection('pages').add(pageModel.toJson());
     log('Sayfa Kaydedildi!');
   }
 

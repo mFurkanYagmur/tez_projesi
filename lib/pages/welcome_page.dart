@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mv_adayi_web_site/model/page_model.dart';
 import 'package:mv_adayi_web_site/util/constants.dart';
+import 'package:mv_adayi_web_site/widget/text_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -75,7 +77,7 @@ class AboutText extends StatefulWidget {
 }
 
 class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
-  final List<String> textList = [
+  /*final List<String> textList = [
     'Bilgisayar Mühendisiyim',
     'Adıyamanlıyım',
     '27. Dönem Milletvekiliyim',
@@ -141,7 +143,7 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
     _cursorAnimationController.dispose();
     _textAnimationController.dispose();
     super.dispose();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +176,7 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
             ),
           ),
           const SizedBox(height: 16),
-          _buildAboutText(),
+          TextSlider(pageModel: PageModel() /* TODO: fetchData*/),
           const SizedBox(height: 16),
           Text(
             'A Partisi',
@@ -204,7 +206,7 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
     );
   }
 
-  Row _buildAboutText() {
+  /*Row _buildAboutText() {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -229,5 +231,5 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
         ),
       ],
     );
-  }
+  }*/
 }

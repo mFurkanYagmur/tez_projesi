@@ -7,9 +7,9 @@ import '../enum/page_type.dart';
 import '../util/constants.dart';
 
 class ReorderableDataList extends StatefulWidget {
-  const ReorderableDataList({super.key, required this.pageType});
+  const ReorderableDataList({super.key, required this.dataType});
 
-  final PageType pageType;
+  final DataType dataType;
 
   @override
   State<ReorderableDataList> createState() => _ReorderableDataListState();
@@ -43,7 +43,7 @@ class _ReorderableDataListState extends State<ReorderableDataList> {
             return Padding(
               key: UniqueKey(),
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: widget.pageType.getInfo().pageItem(e, pageAddViewModel!.pageModel.data.indexOf(e), true),
+              child: widget.dataType.getInfo().pageItem(e, pageAddViewModel!.pageModel.data.indexOf(e), true),
             );
           }).toList(),
         ),
@@ -72,7 +72,7 @@ class _ReorderableDataListState extends State<ReorderableDataList> {
   }
 
   _addItem() {
-    DataModel dataModel = widget.pageType.getInfo().createDataModel();
+    DataModel dataModel = widget.dataType.getInfo().createDataModel();
     pageAddViewModel!.pageModel.data.add(dataModel);
     pageAddViewModel!.notifyChanges();
   }

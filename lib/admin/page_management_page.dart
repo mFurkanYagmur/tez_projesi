@@ -12,23 +12,41 @@ import 'package:provider/provider.dart';
 import '../enum/page_type.dart';
 import '../viewmodels/page_add_viewmodel.dart';
 
-class PageManagementPage extends StatefulWidget {
+class PageManagementPage extends StatelessWidget {
   const PageManagementPage({Key? key}) : super(key: key);
 
   @override
-  State<PageManagementPage> createState() => _PageManagementPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => PageAddViewModel(),
+      child: const _PageManagementPage(),
+    );
+  }
 }
 
-class _PageManagementPageState extends State<PageManagementPage> {
+class _PageManagementPage extends StatefulWidget {
+  const _PageManagementPage({Key? key}) : super(key: key);
+
+  @override
+  State<_PageManagementPage> createState() => _PageManagementPageState();
+}
+
+class _PageManagementPageState extends State<_PageManagementPage> {
   double itemVerticalSpace = kVerticalPadding / 3;
   PageAddViewModel? pageAddViewModel;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
+  void dispose() {
+    pageAddViewModel?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     pageAddViewModel ??= context.read<PageAddViewModel>();
-    PageType? pageType = pageAddViewModel!.pageModel.type;
+    DataType? pageType = pageAddViewModel!.pageModel.type;
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: kVerticalPadding,
@@ -53,7 +71,9 @@ class _PageManagementPageState extends State<PageManagementPage> {
             TextFormField(
               decoration: const InputDecoration(labelText: 'Başlık (Ön)'),
               initialValue: pageAddViewModel!.pageModel.titleFront,
-              validator: context.select<PageAddViewModel, PageType>((value) => value.pageModel.type) == PageType.text ? (value) => null : Validators.requiredTextValidator,
+              validator: context.select<PageAddViewModel, DataType>((value) => value.pageModel.type) == DataType.text
+                  ? (value) => null
+                  : Validators.requiredTextValidator,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (value) {
                 pageAddViewModel!.pageModel.titleFront = value;
@@ -64,7 +84,9 @@ class _PageManagementPageState extends State<PageManagementPage> {
             TextFormField(
               decoration: const InputDecoration(labelText: 'Başlık (Arka)'),
               initialValue: pageAddViewModel!.pageModel.titleBack,
-              validator: context.select<PageAddViewModel, PageType>((value) => value.pageModel.type) == PageType.text ? (value) => null : Validators.requiredTextValidator,
+              validator: context.select<PageAddViewModel, DataType>((value) => value.pageModel.type) == DataType.text
+                  ? (value) => null
+                  : Validators.requiredTextValidator,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (value) {
                 pageAddViewModel!.pageModel.titleBack = value;
@@ -81,10 +103,10 @@ class _PageManagementPageState extends State<PageManagementPage> {
               },
             ),
             SizedBox(height: itemVerticalSpace),
-            DropdownButtonFormField<PageType>(
+            DropdownButtonFormField<DataType>(
               value: pageType,
               decoration: const InputDecoration(labelText: 'Sayfa Tipi'),
-              items: PageType.values.map<DropdownMenuItem<PageType>>((e) {
+              items: _manageableDataTypes().map<DropdownMenuItem<DataType>>((e) {
                 return DropdownMenuItem(
                   value: e,
                   child: Text(e.getInfo().title),
@@ -106,9 +128,9 @@ class _PageManagementPageState extends State<PageManagementPage> {
             ),
             Divider(height: itemVerticalSpace * 2),
             Builder(builder: (context) {
-              var pageType = context.select<PageAddViewModel, PageType>((value) => value.pageModel.type);
+              var pageType = context.select<PageAddViewModel, DataType>((value) => value.pageModel.type);
               return TextFormField(
-                enabled: pageType != PageType.text,
+                enabled: pageType != DataType.text,
                 decoration: const InputDecoration(labelText: 'Kolon Sayısı'),
                 keyboardType: const TextInputType.numberWithOptions(),
                 inputFormatters: [
@@ -131,7 +153,7 @@ class _PageManagementPageState extends State<PageManagementPage> {
               );
             }),
             const SizedBox(height: 24),
-            ReorderableDataList(pageType: pageType),
+            ReorderableDataList(dataType: pageType),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: kVerticalPadding),
               child: _buildPreview(pageType),
@@ -157,7 +179,7 @@ class _PageManagementPageState extends State<PageManagementPage> {
                   },
                   text: 'Tam Sayfa Önizle',
                 ),
-                SizedBox(
+                const SizedBox(
                   width: kHorizontalPadding,
                 ),
                 CustomSolidButton(
@@ -178,7 +200,7 @@ class _PageManagementPageState extends State<PageManagementPage> {
     );
   }
 
-  Widget _buildPreview(PageType pageType) {
+  Widget _buildPreview(DataType pageType) {
     return Builder(builder: (context) {
       context.watch<PageAddViewModel>();
       return Column(
@@ -187,7 +209,7 @@ class _PageManagementPageState extends State<PageManagementPage> {
             'Canlı Önizleme',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          SizedBox(
+          const SizedBox(
             height: kVerticalPadding / 2,
           ),
           pageType.getInfo().page(pageAddViewModel!.pageModel),
@@ -212,6 +234,12 @@ class _PageManagementPageState extends State<PageManagementPage> {
         ],
       );
     });
+  }
+
+  List<DataType> _manageableDataTypes() {
+    List<DataType> tempList = List.of(DataType.values);
+    tempList.removeWhere((element) => !element.usePageManagement());
+    return tempList;
   }
 
   _save() async {
