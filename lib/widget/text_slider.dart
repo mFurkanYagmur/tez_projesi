@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mv_adayi_web_site/model/data_model/slider_data_model.dart';
-import 'package:mv_adayi_web_site/model/page_model.dart';
 
 class TextSlider extends StatefulWidget {
-  const TextSlider({super.key, required this.pageModel});
+  const TextSlider({super.key, required this.dataList});
 
-  final PageModel pageModel;
+  final List<String> dataList;
 
   @override
   State<TextSlider> createState() => _TextSliderState();
@@ -31,7 +29,7 @@ class _TextSliderState extends State<TextSlider> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    textList = widget.pageModel.data.map((e) => (e as SliderDataModel).content ?? '').toList();
+    textList = List.of(widget.dataList);
     _initCursorAnimation();
     _initTextAnimation();
   }

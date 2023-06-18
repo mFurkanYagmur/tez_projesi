@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mv_adayi_web_site/model/page_model.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:mv_adayi_web_site/model/slider_content_model.dart';
 import 'package:mv_adayi_web_site/util/constants.dart';
+import 'package:mv_adayi_web_site/util/util.dart';
+import 'package:mv_adayi_web_site/viewmodels/data_view_model.dart';
+import 'package:mv_adayi_web_site/widget/loading_widget.dart';
 import 'package:mv_adayi_web_site/widget/text_slider.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -15,10 +20,16 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
   late AnimationController _scrollAnimationControler;
   late Animation<double> _scrollAnimation;
 
+  DataViewModel? dataViewModel;
+  SliderContentModel? sliderContentModel;
+
   @override
   void initState() {
     super.initState();
     _initScrollAnimation();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _loadContentData();
+    });
   }
 
   _initScrollAnimation() {
@@ -29,27 +40,30 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    dataViewModel ??= context.read<DataViewModel>();
     final size = MediaQuery.of(context).size;
 
     return SizedBox.fromSize(
       size: size,
-      child: Stack(
-        children: [
-          Container(
-            width: double.infinity,
-            height: size.height,
-            foregroundDecoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-            decoration: const BoxDecoration(
-              image: DecorationImage(image: AssetImage('assets/images/first_bg.jpg'), fit: BoxFit.cover),
+      child: sliderContentModel == null
+          ? Container(color: Theme.of(context).scaffoldBackgroundColor, child: const LoadingWidget())
+          : Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: size.height,
+                  foregroundDecoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(image: AssetImage('assets/images/first_bg.jpg'), fit: BoxFit.cover),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: _buildScrollAnimationWidget(),
+                ),
+                _buildAboutText(),
+              ],
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _buildScrollAnimationWidget(),
-          ),
-          const AboutText(),
-        ],
-      ),
     );
   }
 
@@ -67,119 +81,27 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
       },
     );
   }
-}
 
-class AboutText extends StatefulWidget {
-  const AboutText({Key? key}) : super(key: key);
-
-  @override
-  State<AboutText> createState() => _AboutTextState();
-}
-
-class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
-  /*final List<String> textList = [
-    'Bilgisayar Mühendisiyim',
-    'Adıyamanlıyım',
-    '27. Dönem Milletvekiliyim',
-    'Siyasetçiyim',
-  ];
-
-  TextStyle aboutTextStyle(BuildContext context) => Theme.of(context).textTheme.titleSmall!.copyWith(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 48,
-      );
-
-  late AnimationController _cursorAnimationController;
-  late Animation<Color?> _cursorAnimation;
-  late AnimationController _textAnimationController;
-  late Animation<int> _textAnimation;
-
-  int _textIndex = 0;
-  String _displayText = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _initCursorAnimation();
-    _initTextAnimation();
-  }
-
-  _initCursorAnimation() {
-    _cursorAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
-    _cursorAnimation = ColorTween(begin: Colors.white, end: Colors.white.withOpacity(0.0)).animate(_cursorAnimationController);
-    _cursorAnimationController.repeat(reverse: true);
-  }
-
-  _initTextAnimation() {
-    _textAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
-    _textAnimation = IntTween(begin: 0, end: textList[_textIndex].length).animate(_textAnimationController)
-      ..addListener(() {
-        setState(() {
-          _displayText = textList[_textIndex].substring(0, _textAnimation.value);
-        });
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          Future.delayed(const Duration(milliseconds: 1000), () {
-            _textAnimationController.reverse();
-          });
-        } else if (status == AnimationStatus.dismissed) {
-          setState(() {
-            _textIndex = (_textIndex + 1) % textList.length;
-            _textAnimation = IntTween(
-              begin: 0,
-              end: textList[_textIndex].length,
-            ).animate(_textAnimationController);
-          });
-          _textAnimationController.forward();
-        }
-      });
-    _textAnimationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _cursorAnimationController.dispose();
-    _textAnimationController.dispose();
-    super.dispose();
-  }*/
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildAboutText() {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Merhaba! ',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        // fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
+          Text(
+            sliderContentModel?.beforeSliderText ?? '',
+            style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  // fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 24,
                 ),
-                TextSpan(
-                  text: 'Ben M. Furkan Yağmur,',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        // fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                ),
-              ],
-            ),
           ),
           const SizedBox(height: 16),
-          TextSlider(pageModel: PageModel() /* TODO: fetchData*/),
+          TextSlider(dataList: sliderContentModel?.sliderContent ?? []),
           const SizedBox(height: 16),
           Text(
-            'A Partisi',
+            sliderContentModel?.afterSliderText ?? '',
             style: Theme.of(context).textTheme.titleSmall!.copyWith(
                   fontWeight: FontWeight.normal,
                   color: Colors.white,
@@ -189,7 +111,7 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              launchUrl(Uri.parse('https://www.ysk.gov.tr'));
+              launchUrl(Uri.parse(sliderContentModel?.partiUrl! ?? ''));
             },
             style: ElevatedButton.styleFrom(
               shape: const StadiumBorder(side: BorderSide(color: kPrimaryColor, width: 1)),
@@ -206,30 +128,15 @@ class _AboutTextState extends State<AboutText> with TickerProviderStateMixin {
     );
   }
 
-  /*Row _buildAboutText() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        AnimatedBuilder(
-            animation: _cursorAnimation,
-            builder: (context, child) {
-              return Text(
-                _displayText, //'Ben M. Furkan Yağmur',
-                //  Ben M. Furkan Yağmur || Ben Bilgisayar Mühendisiyim || Ben Siyasetçiyim || Ben 26. Dönem Milletvekiliyim
-                style: aboutTextStyle(context),
-              );
-            }),
-        AnimatedBuilder(
-          animation: _cursorAnimation,
-          builder: (context, child) {
-            return Text(
-              '|',
-              style: aboutTextStyle(context).copyWith(color: _cursorAnimation.value),
-            );
-          },
-        ),
-      ],
-    );
-  }*/
+  _loadContentData() async {
+    try {
+      Map<String, dynamic> data = await dataViewModel!.getData(collectionPath: 'homePage', documentName: 'sliderContent');
+      setState(() {
+        sliderContentModel = SliderContentModel.fromMap(data);
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+      Util.showErrorMessage(context);
+    }
+  }
 }

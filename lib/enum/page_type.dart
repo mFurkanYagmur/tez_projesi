@@ -87,7 +87,7 @@ extension PageTypeExtension on DataType {
             return SliderTextItem(dataModel: dataModel as SliderDataModel, editMode: editMode ?? false, index: index);
           },
           page: (pageModel) {
-            return TextSlider(pageModel: pageModel);
+            return const TextSlider(dataList: []);
           },
           createDataModel: () => SliderDataModel(),
         );

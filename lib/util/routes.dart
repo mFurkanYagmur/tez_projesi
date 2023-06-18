@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/admin_page.dart';
 import 'package:mv_adayi_web_site/home_page.dart';
+import 'package:mv_adayi_web_site/viewmodels/data_view_model.dart';
 import 'package:mv_adayi_web_site/viewmodels/home_page_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -13,16 +14,17 @@ class Routes {
   static Route onGenerateRoutes(RouteSettings? settings) {
     Widget page;
     switch (settings?.name) {
-      case '/':
       case adminPage:
         page = const AdminPage();
         break;
+      case '/':
       case homePage:
       default:
         page = MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => SelectedPageViewModel()),
             ChangeNotifierProvider(create: (context) => HomePageViewModel()),
+            ChangeNotifierProvider(create: (context) => DataViewModel()),
           ],
           child: HomePage(),
         );
