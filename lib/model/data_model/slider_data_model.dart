@@ -4,6 +4,7 @@ class SliderDataModel extends DataModel {
   String? content;
 
   SliderDataModel();
+  SliderDataModel.withContent({required this.content});
 
   SliderDataModel.fromMap(Map<String, dynamic> map) {
     content = map['content'];

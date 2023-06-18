@@ -1,11 +1,14 @@
 import 'package:accordion/accordion.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:mv_adayi_web_site/enum/page_type.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
 import 'package:mv_adayi_web_site/model/data_model/slider_data_model.dart';
 import 'package:mv_adayi_web_site/model/slider_content_model.dart';
 import 'package:mv_adayi_web_site/util/constants.dart';
+import 'package:mv_adayi_web_site/util/util.dart';
 import 'package:mv_adayi_web_site/viewmodels/page_add_viewmodel.dart';
+import 'package:mv_adayi_web_site/widget/loading_widget.dart';
 import 'package:mv_adayi_web_site/widget/reorderable_data_list.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +40,9 @@ class _EditHomePage extends StatefulWidget {
 
 class _EditHomePageState extends State<_EditHomePage> {
   PageAddViewModel? pageAddViewModel;
-  final SliderContentModel sliderContentModel = SliderContentModel();
+  DataViewModel? dataViewModel;
+  SliderContentModel? sliderContentModel;
+  SliderContentModel? lastSavedSliderContent;
 
   final GlobalKey<FormState> _sliderFormKey = GlobalKey();
 
@@ -48,117 +53,154 @@ class _EditHomePageState extends State<_EditHomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _loadData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     pageAddViewModel ??= context.read<PageAddViewModel>();
+    dataViewModel ??= context.read<DataViewModel>();
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: kVerticalPadding, horizontal: kHorizontalPadding),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          Accordion(
+          if (sliderContentModel != null) Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              AccordionSection(
-                header: const Text('Slider İçerikleri'),
-                content: Column(
-                  children: [
-                    Form(
-                      key: _sliderFormKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Sabit metin (slider öncesi)',
-                            ),
-                            initialValue: sliderContentModel.beforeSliderText ?? '',
-                            maxLength: 40,
-                            buildCounter: buildTextFieldCounter,
-                            validator: (value) => Validators.requiredTextValidator(value, 3),
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            onChanged: (value) {
-                              sliderContentModel.beforeSliderText = value;
-                            },
+              Accordion(
+                children: [
+                  AccordionSection(
+                    header: const Text('Slider İçerikleri'),
+                    content: Column(
+                      children: [
+                        Form(
+                          key: _sliderFormKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  labelText: 'Sabit metin (slider öncesi)',
+                                ),
+                                initialValue: sliderContentModel?.beforeSliderText ?? '',
+                                maxLength: 40,
+                                buildCounter: buildTextFieldCounter,
+                                validator: (value) => Validators.requiredTextValidator(value, 3),
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                onChanged: (value) {
+                                  sliderContentModel!.beforeSliderText = value;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  labelText: 'Sabit metin (slider sonrası)',
+                                ),
+                                initialValue: sliderContentModel?.afterSliderText ?? '',
+                                maxLength: 40,
+                                buildCounter: buildTextFieldCounter,
+                                onChanged: (value) {
+                                  sliderContentModel!.afterSliderText = value;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  labelText: 'Parti Sayfası',
+                                ),
+                                initialValue: sliderContentModel?.partiUrl ?? '',
+                                validator: (value) => Validators.requiredTextValidator(value),
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                keyboardType: TextInputType.url,
+                                onChanged: (value) {
+                                  sliderContentModel!.partiUrl = value;
+                                },
+                              ),
+                              const Divider(
+                                height: 32,
+                              ),
+                              FormField(
+                                validator: (value) {
+                                  bool containsEmpty = pageAddViewModel!.pageModel.data
+                                      .any((element) => (element as SliderDataModel).content?.isEmpty ?? true);
+                                  if (containsEmpty) {
+                                    return 'Lütfen açık olan tüm alanları doldurun';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (newValue) {
+                                  sliderContentModel!.sliderContent =
+                                      pageAddViewModel!.pageModel.data.map((e) => (e as SliderDataModel).content!).toList();
+                                },
+                                builder: (field) {
+                                  return const ReorderableDataList(dataType: DataType.sliderText);
+                                },
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    if (lastSavedSliderContent == sliderContentModel) {
+                                      UIHelper.showSnackBar(context: context, text: 'Veriler Kaydededildi', type: UIType.success);
+                                      debugPrint('aynı veriler');
+                                      return;
+                                    }
+                                    if (_sliderFormKey.currentState!.validate()) {
+                                      _sliderFormKey.currentState!.save();
+                                      _saveSliderContent();
+                                    }
+                                  },
+                                  child: const Text('Kaydet')),
+                            ],
                           ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Sabit metin (slider sonrası)',
-                            ),
-                            initialValue: sliderContentModel.afterSliderText ?? '',
-                            maxLength: 40,
-                            buildCounter: buildTextFieldCounter,
-                            onChanged: (value) {
-                              sliderContentModel.afterSliderText = value;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Parti Sayfası',
-                            ),
-                            initialValue: sliderContentModel.partiUrl ?? '',
-                            validator: (value) => Validators.requiredTextValidator(value),
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            keyboardType: TextInputType.url,
-                            onChanged: (value) {
-                              sliderContentModel.partiUrl = value;
-                            },
-                          ),
-                          const Divider(
-                            height: 32,
-                          ),
-                          FormField(
-                            validator: (value) {
-                              bool containsEmpty = pageAddViewModel!.pageModel.data
-                                  .any((element) => (element as SliderDataModel).content?.isEmpty ?? true);
-                              if (containsEmpty) {
-                                return 'Lütfen açık olan tüm alanları doldurun';
-                              }
-                              return null;
-                            },
-                            onSaved: (newValue) {
-                              sliderContentModel.sliderContent =
-                                  pageAddViewModel!.pageModel.data.map((e) => (e as SliderDataModel).content!).toList();
-                            },
-                            builder: (field) {
-                              return const ReorderableDataList(dataType: DataType.sliderText);
-                            },
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                if (_sliderFormKey.currentState!.validate()) {
-                                  _sliderFormKey.currentState!.save();
-                                  _saveSliderContent();
-                                }
-                              },
-                              child: const Text('Kaydet')),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
+          if (sliderContentModel == null) const LoadingWidget(),
         ],
       ),
     );
   }
 
+  _loadData() async {
+    try {
+      Map<String, dynamic> data = await dataViewModel!.getData(collectionPath: 'homePage', documentName: 'sliderContent');
+      setState(() {
+        sliderContentModel = SliderContentModel.fromMap(data);
+        lastSavedSliderContent = sliderContentModel;
+        pageAddViewModel!.pageModel.data = sliderContentModel!.sliderContent!.map((e) => SliderDataModel.withContent(content: e)).toList();
+      });
+
+    } catch (e) {
+      debugPrint(e.toString());
+      Util.showErrorMessage(context);
+    }
+  }
+
   _saveSliderContent() async {
-    UIHelper.showSnackBar(context: context, text: 'Veriler Kaydediliyor...', type: UIType.info);
-    await context
-        .read<DataViewModel>()
-        .saveData(data: sliderContentModel.toJson(), collectionPath: 'homePage', documentName: 'sliderContent');
-    if (!mounted) return;
-    UIHelper.showSnackBar(context: context, text: 'Veriler Kaydededildi', type: UIType.success);
-    debugPrint('Slider content is : $sliderContentModel');
+    try {
+      UIHelper.showSnackBar(context: context, text: 'Veriler Kaydediliyor...', type: UIType.info);
+      await dataViewModel!.saveData(data: sliderContentModel!.toJson(), collectionPath: 'homePage', documentName: 'sliderContent');
+      if (!mounted) return;
+      UIHelper.showSnackBar(context: context, text: 'Veriler Kaydededildi', type: UIType.success);
+      debugPrint('Slider content is : $sliderContentModel');
+    } catch (e) {
+      debugPrint(e.toString());
+      Util.showErrorMessage(context);
+    }
   }
 }
