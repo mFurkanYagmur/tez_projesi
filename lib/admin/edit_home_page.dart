@@ -191,6 +191,21 @@ class _EditHomePageState extends State<_EditHomePage> {
     }
   }
 
+  _loadData() async {
+    try {
+      Map<String, dynamic> data = await dataViewModel!.getData(collectionPath: 'homePage', documentName: 'sliderContent');
+      setState(() {
+        sliderContentModel = SliderContentModel.fromMap(data);
+        lastSavedSliderContent = sliderContentModel;
+        pageAddViewModel!.pageModel.data = sliderContentModel!.sliderContent!.map((e) => SliderDataModel.withContent(content: e)).toList();
+      });
+
+    } catch (e) {
+      debugPrint(e.toString());
+      Util.showErrorMessage(context);
+    }
+  }
+
   _saveSliderContent() async {
     try {
       UIHelper.showSnackBar(context: context, text: 'Veriler Kaydediliyor...', type: UIType.info);
