@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mv_adayi_web_site/util/extensions.dart';
+import 'package:mv_adayi_web_site/viewmodels/data_view_model.dart';
 import 'package:mv_adayi_web_site/widget/logo.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../model/slider_content_model.dart';
 import '../util/constants.dart';
 import '../home_page.dart';
+import '../util/util.dart';
 import '../viewmodels/selected_page_viewmodel.dart';
 
 class TopBar extends StatefulWidget {
@@ -20,6 +24,9 @@ class _TopBarState extends State<TopBar> {
   bool hover = false;
   bool isScrolled = false;
   int selectedPage = 0;
+
+  DataViewModel? dataViewModel;
+  SliderContentModel? sliderContentModel;
 
   @override
   void initState() {
@@ -36,11 +43,19 @@ class _TopBarState extends State<TopBar> {
         });
       }
     });
+
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _loadSocialData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     selectedPage = context.watch<SelectedPageViewModel>().selectedPage;
+    dataViewModel ??= context.read<DataViewModel>();
+    if (sliderContentModel == null){
+      return const SizedBox();
+    }
     return MouseRegion(
       onEnter: (event) {
         setState(() {
@@ -80,15 +95,15 @@ class _TopBarState extends State<TopBar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SocialBtn(assetPath: 'twitter.svg', onPressed: () => _launchUrl('https://www.twitter.com')),
+                SocialBtn(assetPath: 'twitter.svg', onPressed: () => _launchUrl(sliderContentModel!.twitterUrl ?? 'https://www.twitter.com')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'instagram.svg', onPressed: () => _launchUrl('https://www.instagram.com')),
+                SocialBtn(assetPath: 'instagram.svg', onPressed: () => _launchUrl(sliderContentModel!.instagramUrl ?? 'https://www.instagram.com')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'facebook.svg', onPressed: () => _launchUrl('https://www.facebook.com')),
+                SocialBtn(assetPath: 'facebook.svg', onPressed: () => _launchUrl(sliderContentModel!.facebookUrl ?? 'https://www.facebook.com')),
               ],
             ),
           ],
@@ -104,6 +119,18 @@ class _TopBarState extends State<TopBar> {
 
   _launchUrl(String url) {
     launchUrl(Uri.parse(url));
+  }
+
+  _loadSocialData() async {
+    try {
+      Map<String, dynamic> data = await dataViewModel!.getData(collectionPath: 'homePage', documentName: 'sliderContent');
+      setState(() {
+        sliderContentModel = SliderContentModel.fromMap(data);
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+      Util.showErrorMessage(context);
+    }
   }
 }
 

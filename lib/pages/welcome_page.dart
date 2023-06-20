@@ -17,6 +17,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin {
+  final String defaultBg = 'https://images.unsplash.com/photo-1553773077-91673524aafa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=871&q=80';
   late AnimationController _scrollAnimationControler;
   late Animation<double> _scrollAnimation;
 
@@ -53,8 +54,8 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                   width: double.infinity,
                   height: size.height,
                   foregroundDecoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(image: AssetImage('assets/images/first_bg.jpg'), fit: BoxFit.cover),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(image: NetworkImage(sliderContentModel!.backgroundImage ?? defaultBg), fit: BoxFit.cover),
                   ),
                 ),
                 Align(

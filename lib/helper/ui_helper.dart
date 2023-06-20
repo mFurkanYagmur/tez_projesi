@@ -15,7 +15,7 @@ extension UITypeExtension on UIType {
       case UIType.info:
         return Colors.blueAccent;
       case UIType.warning:
-        return Colors.deepOrangeAccent;
+        return Colors.orange;
       case UIType.danger:
         return Colors.redAccent;
     }

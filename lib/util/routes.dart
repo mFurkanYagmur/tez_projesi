@@ -14,10 +14,10 @@ class Routes {
   static Route onGenerateRoutes(RouteSettings? settings) {
     Widget page;
     switch (settings?.name) {
+      case '/':
       case adminPage:
         page = const AdminPage();
         break;
-      case '/':
       case homePage:
       default:
         page = MultiProvider(
