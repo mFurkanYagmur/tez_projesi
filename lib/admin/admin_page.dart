@@ -16,42 +16,39 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   late Size size;
-  int selectedPage = 0;
+  int selectedPage = 1;
   PageController pageController = PageController();
+  ManagementPage? managementPage;
 
-  List<MenuModel> menuList = [
-    MenuModel(
-      title: 'Ana Sayfa',
-      description: 'Ana sayfayı düzenleyin.',
-      selectedIcon: Icons.home,
-      unselectedIcon: Icons.home_outlined,
-      page: const EditHomePage(),
-    ),
-    MenuModel(
-        title: 'Özgeçmiş',
-        description: 'Özgeçmiş bilgilerinizi ve CV\'nizi güncelleyin.',
-        selectedIcon: Icons.manage_accounts,
-        unselectedIcon: Icons.manage_accounts_outlined,
-        page: const SecimVaatleriPage()),
-    MenuModel(
-        title: 'İcraatlar',
-        description: 'Sayfalarda kullanılmak üzere icraat ekleyin veya var olan icraati silin.',
-        selectedIcon: Icons.work,
-        unselectedIcon: Icons.work_outline,
-        page: const SecimVaatleriPage()),
-    MenuModel(
-        title: 'Sayfa Yönetimi',
-        description: 'Mevcut sayfalarınızı düzenleyin veya sayfa ekleyin/çıkartın.',
-        selectedIcon: Icons.file_copy,
-        unselectedIcon: Icons.file_copy_outlined,
-        page: const PageManagementPage()),
-    MenuModel(
-        title: 'Mesajlar',
-        description: 'Site içeririinden size gönderilen mesajları buradan görüntüleyebilirsiniz.',
-        selectedIcon: Icons.message,
-        unselectedIcon: Icons.message_outlined,
-        page: const SecimVaatleriPage()),
-  ];
+  late List<MenuModel> menuList;
+
+  @override
+  void initState() {
+    super.initState();
+    menuList = [
+      MenuModel(
+        title: 'Ana Sayfa',
+        description: 'Ana sayfayı düzenleyin.',
+        selectedIcon: Icons.home,
+        unselectedIcon: Icons.home_outlined,
+        page: () => const EditHomePage(),
+      ),
+      MenuModel(
+          title: 'Sayfa Yönetimi',
+          description: 'Mevcut sayfalarınızı düzenleyin veya sayfa ekleyin/çıkartın.',
+          selectedIcon: Icons.file_copy,
+          unselectedIcon: Icons.file_copy_outlined,
+          page: () => PageManagementPage(
+                page: managementPage,
+              )),
+      MenuModel(
+          title: 'Mesajlar',
+          description: 'Site içeririinden size gönderilen mesajları buradan görüntüleyebilirsiniz.',
+          selectedIcon: Icons.message,
+          unselectedIcon: Icons.message_outlined,
+          page: () => const SecimVaatleriPage()),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +78,7 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                   Container(
                     color: Colors.white,
-                    child: menuList[selectedPage].page,
+                    child: menuList[selectedPage].page(),
 
                     /*Column(
                       children: [
@@ -165,37 +162,70 @@ class _AdminPageState extends State<AdminPage> {
   Widget buildSideMenuItem({required int index}) {
     bool isSelected = selectedPage == index;
     var page = menuList[index];
-    return InkWell(
-      onTap: () {
-        if (isSelected) return;
-        setState(() {
-          selectedPage = index;
-        });
-      },
-      child: ListTile(
-        leading: Icon(isSelected ? page.selectedIcon : page.unselectedIcon, color: isSelected ? kPrimaryColor : kTextLightColor),
-        title: Text(
-          page.title,
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(color: isSelected ? kTextColor : kTextLightColor),
-        ),
-        contentPadding: EdgeInsets.only(left: 16),
-        trailing: !isSelected
-            ? null
-            : Padding(
-                padding: EdgeInsets.symmetric(vertical: 5),
-                child: Container(
-                  width: 5,
-                  decoration: const BoxDecoration(
-                    color: kPrimaryColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
+
+    Widget view = ListTile(
+      leading: Icon(isSelected ? page.selectedIcon : page.unselectedIcon, color: isSelected ? kPrimaryColor : kTextLightColor),
+      title: Text(
+        page.title,
+        style: Theme.of(context).textTheme.titleMedium!.copyWith(color: isSelected ? kTextColor : kTextLightColor),
+      ),
+      contentPadding: EdgeInsets.only(left: 16),
+      trailing: !isSelected
+          ? null
+          : Padding(
+              padding: EdgeInsets.symmetric(vertical: 5),
+              child: Container(
+                width: 5,
+                decoration: const BoxDecoration(
+                  color: kPrimaryColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
                   ),
                 ),
               ),
-      ),
+            ),
     );
+
+    if (menuList[index].page() is PageManagementPage) {
+      return PopupMenuButton<ManagementPage>(
+        onSelected: (value) {
+          if (selectedPage == index && managementPage == value) return;
+          setState(() {
+            managementPage = value;
+            selectedPage = index;
+          });
+        },
+        itemBuilder: (context) {
+          return ManagementPage.values.map((e) {
+            String text;
+            switch (e) {
+              case ManagementPage.pageManager:
+                text = 'Sayfa Yönetimi';
+                break;
+              case ManagementPage.add:
+                text = 'Sayfa Ekle';
+                break;
+            }
+            return PopupMenuItem(
+              value: e,
+              child: Text(text),
+            );
+          }).toList();
+        },
+        child: view,
+      );
+    } else {
+      return InkWell(
+        onTap: () async {
+          if (isSelected) return;
+          setState(() {
+            selectedPage = index;
+          });
+        },
+        child: view,
+      );
+    }
   }
 
   Widget buildTopBar() {
@@ -236,13 +266,6 @@ class _AdminPageState extends State<AdminPage> {
       ),
     );
   }
-
-  Widget buildPageView() {
-    return PageView(
-      controller: pageController,
-      children: [],
-    );
-  }
 }
 
 class MenuModel {
@@ -250,7 +273,7 @@ class MenuModel {
   String description;
   IconData selectedIcon;
   IconData unselectedIcon;
-  Widget page;
+  Widget Function() page;
 
   MenuModel({
     required this.title,
