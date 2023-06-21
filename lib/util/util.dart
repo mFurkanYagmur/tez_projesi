@@ -14,4 +14,8 @@ class Util {
   static showErrorMessage(BuildContext context) {
     UIHelper.showSnackBar(context: context, text: 'Bir hata oluştu! Lütfen tekrar deneyin.', type: UIType.danger);
   }
+
+  static bool getPageSameAsFooter(int index) {
+    return index %2 == 1;
+  }
 }

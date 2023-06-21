@@ -7,6 +7,10 @@ class DataViewModel extends ChangeNotifier {
     return await FirebaseClient.instance.saveData(data: data, collectionPath: collectionPath, documentName: documentName);
   }
 
+  Future deleteData({required String collectionPath, required String documentName}) async {
+    return await FirebaseClient.instance.deleteData(collectionPath: collectionPath, documentName: documentName);
+  }
+
   Future<Map<String, dynamic>> getData({required String collectionPath, required String documentName}) async {
     return await FirebaseClient.instance.getData(collectionPath: collectionPath, documentName: documentName);
   }

@@ -38,12 +38,6 @@ class _PageAddPageState extends State<_PageAddPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
-  void dispose() {
-    pageAddViewModel?.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     pageAddViewModel ??= context.read<PageAddViewModel>();
     DataType? pageType = pageAddViewModel!.pageModel.type;

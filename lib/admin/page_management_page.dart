@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/page_add_page.dart';
+import 'package:mv_adayi_web_site/admin/page_manager.dart';
 
 enum ManagementPage {
   add,
@@ -14,11 +15,11 @@ class PageManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (page) {
-      case null:
       case ManagementPage.add:
-        return PageAddPage();
+        return const PageAddPage();
+      case null:
       case ManagementPage.pageManager:
-        return SizedBox();
+        return const PageManager();
     }
   }
 }

@@ -47,12 +47,6 @@ class _EditHomePageState extends State<_EditHomePage> {
   final GlobalKey<FormState> _sliderFormKey = GlobalKey();
 
   @override
-  void dispose() {
-    pageAddViewModel?.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

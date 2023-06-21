@@ -35,7 +35,12 @@ class FirebaseClient {
       await _firestore.collection(collectionPath).add(data);
     }
     // await _firestore.collection('pages').add(pageModel.toJson());
-    log('Sayfa Kaydedildi!');
+    log('Veri Kaydedildi!');
+  }
+
+  Future deleteData({required String collectionPath, required String documentName}) async {
+    await _firestore.collection(collectionPath).doc(documentName).delete();
+    log('Veri Silindi!');
   }
 
   Future<Map<String, dynamic>> getData({required String collectionPath, required String documentName}) async {
@@ -47,7 +52,7 @@ class FirebaseClient {
   Future<List<PageModel>> getPages() async {
     var result = await _firestore.collection('pages').orderBy('orderNumber').get();
     log(result.toString());
-    List<PageModel> pages = result.docs.map((e) => PageModel.fromMap(e.data())).toList();
+    List<PageModel> pages = result.docs.map((e) => PageModel.fromMap(e.data(), e.id)).toList();
     return pages;
   }
 }

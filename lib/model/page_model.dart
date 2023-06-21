@@ -8,6 +8,7 @@ import '../enum/page_type.dart';
 import 'data_model/album_data_model.dart';
 
 class PageModel {
+  String? docName;
   int? orderNumber;
   String? titleFront;
   String? titleBack;
@@ -27,7 +28,7 @@ class PageModel {
     ];
   }
 
-  PageModel.fromMap(Map<String, dynamic> map) {
+  PageModel.fromMap(Map<String, dynamic> map, this.docName) {
     DataType? pageType = Util.convertStringToPageType(map['type'].toString());
     if (pageType == null) {
       throw Exception('Hatalı sayfa türü! ${map['type']}');
