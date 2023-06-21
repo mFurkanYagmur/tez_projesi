@@ -1,7 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:mv_adayi_web_site/model/page_model.dart';
+import 'package:mv_adayi_web_site/util/util.dart';
 import 'package:provider/provider.dart';
 
 import '../enum/page_type.dart';
@@ -10,22 +13,27 @@ import '../util/constants.dart';
 import '../util/validators.dart';
 import '../viewmodels/page_add_viewmodel.dart';
 import '../widget/custom_solid_button.dart';
+import '../widget/loading_widget.dart';
 import '../widget/reorderable_data_list.dart';
 
 class PageAddPage extends StatelessWidget {
-  const PageAddPage({super.key});
+  const PageAddPage({super.key, this.pageModel});
+
+  final PageModel? pageModel;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => PageAddViewModel(),
-      child: const _PageAddPage(),
+      child: _PageAddPage(pageModel: pageModel),
     );
   }
 }
 
 class _PageAddPage extends StatefulWidget {
-  const _PageAddPage();
+  const _PageAddPage({this.pageModel});
+
+  final PageModel? pageModel;
 
   @override
   State<_PageAddPage> createState() => _PageAddPageState();
@@ -36,11 +44,27 @@ class _PageAddPageState extends State<_PageAddPage> {
   PageAddViewModel? pageAddViewModel;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
+  bool isUpdated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.pageModel != null) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {
+        pageAddViewModel!.pageModel = widget.pageModel!;
+        isUpdated = true;
+        });
+      });
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
     pageAddViewModel ??= context.read<PageAddViewModel>();
     DataType? pageType = pageAddViewModel!.pageModel.type;
+    if (widget.pageModel != null && !isUpdated) return const LoadingWidget();
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: kVerticalPadding,
@@ -159,17 +183,7 @@ class _PageAddPageState extends State<_PageAddPage> {
                 CustomSolidButton(
                   bgFilled: false,
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          insetPadding: EdgeInsets.zero,
-                          child: SingleChildScrollView(
-                            child: pageType.getInfo().page(pageAddViewModel!.pageModel),
-                          ),
-                        );
-                      },
-                    );
+                    Util.showFullSizePage(context: context, pageType: pageType, pageModel: pageAddViewModel!.pageModel);
                   },
                   text: 'Tam Sayfa Önizle',
                 ),

@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
 import 'package:mv_adayi_web_site/model/data_model/text_data_model.dart';
 import 'package:mv_adayi_web_site/util/constants.dart';
+import 'package:mv_adayi_web_site/util/util.dart';
 import 'package:mv_adayi_web_site/viewmodels/data_view_model.dart';
 import 'package:mv_adayi_web_site/viewmodels/home_page_viewmodel.dart';
 import 'package:mv_adayi_web_site/viewmodels/page_add_viewmodel.dart';
@@ -14,7 +15,9 @@ import '../enum/page_type.dart';
 import '../model/page_model.dart';
 
 class PageManager extends StatelessWidget {
-  const PageManager({super.key});
+  const PageManager({super.key, required this.navigateAddPage});
+
+  final Function(PageModel? page) navigateAddPage;
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +27,15 @@ class PageManager extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PageAddViewModel()),
         ChangeNotifierProvider(create: (context) => DataViewModel()),
       ],
-      child: const _PageManager(),
+      child: _PageManager(navigateAddPage: navigateAddPage),
     );
   }
 }
 
 class _PageManager extends StatefulWidget {
-  const _PageManager();
+  const _PageManager({required this.navigateAddPage});
+
+  final Function(PageModel? page) navigateAddPage;
 
   @override
   State<_PageManager> createState() => _PageManagerState();
@@ -79,6 +84,9 @@ class _PageManagerState extends State<_PageManager> {
                         (pageModel.type == DataType.text ? pageModel.data.map((e) => (e as TextDataModel).title).join(', ') : '');
                     return ListTile(
                       key: UniqueKey(),
+                      onTap: () {
+                        Util.showFullSizePage(context: context, pageType: pageModel.type, pageModel: pageModel);
+                      },
                       leading: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -98,9 +106,7 @@ class _PageManagerState extends State<_PageManager> {
                         children: [
                           IconButton(
                               onPressed: () {
-                                // setState(() {
-                                //   changedList!.removeAt(index);
-                                // });
+                                widget.navigateAddPage(pageModel);
                               },
                               icon: const Icon(
                                 Icons.edit,

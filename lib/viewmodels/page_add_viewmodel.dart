@@ -14,6 +14,6 @@ class PageAddViewModel extends ChangeNotifier {
   }
 
   Future save() async {
-    return await FirebaseClient.instance.saveData(data: pageModel.toJson(), collectionPath: 'pages');
+    return await FirebaseClient.instance.saveData(data: pageModel.toJson(), collectionPath: 'pages', documentName: pageModel.docName);
   }
 }

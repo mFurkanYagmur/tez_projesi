@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../enum/page_type.dart';
 import '../helper/ui_helper.dart';
+import '../model/page_model.dart';
 
 class Util {
   static DataType? convertStringToPageType(String pageType) {
@@ -17,5 +18,19 @@ class Util {
 
   static bool getPageSameAsFooter(int index) {
     return index %2 == 1;
+  }
+
+  static showFullSizePage({required BuildContext context, required DataType pageType, required PageModel pageModel,}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          child: SingleChildScrollView(
+            child: pageType.getInfo().page(pageModel),
+          ),
+        );
+      },
+    );
   }
 }
