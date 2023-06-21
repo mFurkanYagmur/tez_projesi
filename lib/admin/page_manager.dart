@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
@@ -142,10 +144,14 @@ class _PageManagerState extends State<_PageManager> {
                   CustomSolidButton(
                     bgFilled: false,
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    text: 'Yeni Sayfa Ekle', onPressed: () {
+                    widget.navigateAddPage(null);
+                  },),
+                  CustomSolidButton(
+                    bgFilled: false,
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                     onPressed: () {
-                      setState(() {
-                        changedList = List.of(homePageViewModel!.pages);
-                      });
+                      _reset();
                     },
                     text: 'Sıfırla',
                   ),
@@ -172,6 +178,12 @@ class _PageManagerState extends State<_PageManager> {
     );
   }
 
+  _reset() {
+    setState(() {
+      changedList = List.of(homePageViewModel!.pages);
+    });
+  }
+
   _changeOrder({required int oldIndex, required int newIndex}) {
     if (newIndex >= changedList!.length) {
       newIndex = changedList!.length - 1;
@@ -186,14 +198,19 @@ class _PageManagerState extends State<_PageManager> {
   }
 
   _save() async {
-    // try {
+    try {
+      if (changedList!.isEmpty) {
+        _reset();
+        UIHelper.showSnackBar(context: context, text: 'Tüm sayfalar silinemez! Düzen sıfırlandı.', type: UIType.warning);
+        return;
+      }
       await _deleteDocuments();
       await _updateOrderDocuments();
       UIHelper.showSnackBar(context: context, text: 'İşlem Tamamlandı.', type: UIType.success);
-    // } catch (e) {
-    //   Util.showErrorMessage(context);
-    //   log(e.toString(), error: e);
-    // }
+    } catch (e) {
+      Util.showErrorMessage(context);
+      log(e.toString(), error: e);
+    }
   }
 
   Future _deleteDocuments() async {
