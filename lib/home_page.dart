@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mv_adayi_web_site/helper/ui_helper.dart';
 import 'package:mv_adayi_web_site/model/page_model.dart';
+import 'package:mv_adayi_web_site/pages/contact_page.dart';
 import 'package:mv_adayi_web_site/pages/data_page/data_page.dart';
 import 'package:mv_adayi_web_site/pages/welcome_page.dart';
 import 'package:mv_adayi_web_site/viewmodels/selected_page_viewmodel.dart';
@@ -95,6 +96,7 @@ class _HomePageState extends State<HomePage> {
                 // for (int i=0; i<pages.length; i++)
                 // DataPage(pageModel: pages[i], sameAsFooter: ((pages.length-i) %2 == 0),),
                 ...pageWidgetList,
+                const ContactPage(),
                 const Footer(),
               ],
             ),
