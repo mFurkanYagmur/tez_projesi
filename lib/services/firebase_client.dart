@@ -49,6 +49,12 @@ class FirebaseClient {
     return result.data() ?? {};
   }
 
+  Future<List<Map<String, dynamic>>> getDataList({required String collectionPath}) async {
+    var result = await _firestore.collection(collectionPath).get();
+    log(result.toString());
+    return result.docs.map((e) => {...e.data(), 'id': e.id}).toList();
+  }
+
   Future<List<PageModel>> getPages() async {
     var result = await _firestore.collection('pages').orderBy('orderNumber').get();
     log(result.toString());

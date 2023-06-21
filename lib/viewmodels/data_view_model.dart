@@ -14,4 +14,8 @@ class DataViewModel extends ChangeNotifier {
   Future<Map<String, dynamic>> getData({required String collectionPath, required String documentName}) async {
     return await FirebaseClient.instance.getData(collectionPath: collectionPath, documentName: documentName);
   }
+
+  Future<List<Map<String, dynamic>>> getDataList({required String collectionPath}) async {
+    return await FirebaseClient.instance.getDataList(collectionPath: collectionPath);
+  }
 }

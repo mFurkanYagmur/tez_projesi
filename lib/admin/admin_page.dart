@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mv_adayi_web_site/admin/edit_home_page.dart';
+import 'package:mv_adayi_web_site/admin/message_manager.dart';
 import 'package:mv_adayi_web_site/admin/page_management_page.dart';
-import 'package:mv_adayi_web_site/pages/secim_vaatleri_page.dart';
 import 'package:mv_adayi_web_site/util/constants.dart';
 import 'package:mv_adayi_web_site/util/routes.dart';
 
@@ -46,7 +46,7 @@ class _AdminPageState extends State<AdminPage> {
           description: 'Site içeririinden size gönderilen mesajları buradan görüntüleyebilirsiniz.',
           selectedIcon: Icons.message,
           unselectedIcon: Icons.message_outlined,
-          page: () => const SecimVaatleriPage()),
+          page: () => const MessageManager()),
     ];
   }
 
