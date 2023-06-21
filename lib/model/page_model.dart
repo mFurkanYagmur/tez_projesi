@@ -10,6 +10,7 @@ import 'data_model/album_data_model.dart';
 class PageModel {
   String? docName;
   int? orderNumber;
+  String? menuTitle;
   String? titleFront;
   String? titleBack;
   String? description;
@@ -48,6 +49,7 @@ class PageModel {
     }).toList();
 
     orderNumber = map['orderNumber'];
+    menuTitle = map['menuTitle'];
     titleFront = map['titleFront'];
     titleBack = map['titleBack'];
     description = map['description'];
@@ -73,6 +75,7 @@ class PageModel {
 
   Map<String, dynamic> toJson() => {
         'orderNumber': orderNumber,
+        'menuTitle': menuTitle,
         'titleFront': titleFront,
         'titleBack': titleBack,
         'description': description,

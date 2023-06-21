@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mv_adayi_web_site/model/page_model.dart';
 import 'package:mv_adayi_web_site/util/extensions.dart';
 import 'package:mv_adayi_web_site/viewmodels/data_view_model.dart';
+import 'package:mv_adayi_web_site/viewmodels/home_page_viewmodel.dart';
 import 'package:mv_adayi_web_site/widget/logo.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,6 +28,7 @@ class _TopBarState extends State<TopBar> {
   int selectedPage = 0;
 
   DataViewModel? dataViewModel;
+  HomePageViewModel? homePageViewModel;
   SliderContentModel? sliderContentModel;
 
   @override
@@ -51,9 +54,11 @@ class _TopBarState extends State<TopBar> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<HomePageViewModel>();
     selectedPage = context.watch<SelectedPageViewModel>().selectedPage;
     dataViewModel ??= context.read<DataViewModel>();
-    if (sliderContentModel == null){
+    homePageViewModel ??= context.read<HomePageViewModel>();
+    if (sliderContentModel == null) {
       return const SizedBox();
     }
     return MouseRegion(
@@ -83,27 +88,38 @@ class _TopBarState extends State<TopBar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                MenuButton(title: 'Hakkımda', onPressed: () => _scrollToPage(0), isSelected: selectedPage <= 0),
-                MenuButton(title: '150 Günlük Plan', onPressed: () => _scrollToPage(1), isSelected: selectedPage == 1),
-                MenuButton(title: 'Seçim Vaatleri', onPressed: () => _scrollToPage(2), isSelected: selectedPage == 2),
-                MenuButton(title: 'Vizyon & Misyon', onPressed: () => _scrollToPage(3), isSelected: selectedPage == 3),
-                MenuButton(title: 'İletişim', onPressed: () => _scrollToPage(4), isSelected: selectedPage == 4),
-                MenuButton(title: 'Parti', onPressed: () => _launchUrl('https://www.ysk.gov.tr'), isSelected: selectedPage == 5),
+                // MenuButton(title: 'Ana Sayfa', onPressed: () => _scrollToPage(0), isSelected: selectedPage <= 0),
+                ..._getMenuList(),
+                // MenuButton(title: 'Hakkımda', onPressed: () => _scrollToPage(0), isSelected: selectedPage <= 0),
+                // MenuButton(title: '150 Günlük Plan', onPressed: () => _scrollToPage(1), isSelected: selectedPage == 1),
+                // MenuButton(title: 'Seçim Vaatleri', onPressed: () => _scrollToPage(2), isSelected: selectedPage == 2),
+                // MenuButton(title: 'Vizyon & Misyon', onPressed: () => _scrollToPage(3), isSelected: selectedPage == 3),
+                // MenuButton(title: 'İletişim', onPressed: () => _scrollToPage(4), isSelected: selectedPage == 4),
+                MenuButton(
+                    title: 'Parti',
+                    onPressed: () => _launchUrl(sliderContentModel!.partiUrl ?? 'https://www.ysk.gov.tr'),
+                    isSelected: selectedPage == 5),
               ],
             ),
             const Spacer(),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SocialBtn(assetPath: 'twitter.svg', onPressed: () => _launchUrl(sliderContentModel!.twitterUrl ?? 'https://www.twitter.com')),
+                SocialBtn(
+                    assetPath: 'twitter.svg',
+                    onPressed: () => _launchUrl(sliderContentModel!.twitterUrl ?? 'https://www.twitter.com')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'instagram.svg', onPressed: () => _launchUrl(sliderContentModel!.instagramUrl ?? 'https://www.instagram.com')),
+                SocialBtn(
+                    assetPath: 'instagram.svg',
+                    onPressed: () => _launchUrl(sliderContentModel!.instagramUrl ?? 'https://www.instagram.com')),
                 const SizedBox(
                   width: 8,
                 ),
-                SocialBtn(assetPath: 'facebook.svg', onPressed: () => _launchUrl(sliderContentModel!.facebookUrl ?? 'https://www.facebook.com')),
+                SocialBtn(
+                    assetPath: 'facebook.svg',
+                    onPressed: () => _launchUrl(sliderContentModel!.facebookUrl ?? 'https://www.facebook.com')),
               ],
             ),
           ],
@@ -131,6 +147,26 @@ class _TopBarState extends State<TopBar> {
       debugPrint(e.toString());
       Util.showErrorMessage(context);
     }
+  }
+
+  List<Widget> _getMenuList() {
+    List<PageModel> pages = homePageViewModel!.pages;
+    if (pages.isEmpty) return [];
+    List<Widget> list = [];
+    List<int> indexList = [];
+    for (int i = 0; i < pages.length; i++) {
+      if (pages[i].menuTitle != null) {
+        indexList.add(i);
+      }
+    }
+    for (int i = 0; i < indexList.length; i++) {
+      list.add(MenuButton(
+          title: pages[indexList[i]].menuTitle!,
+          onPressed: () => _scrollToPage(i),
+          isSelected: selectedPage >= indexList[i] &&
+              (indexList.length == (i + 1) || (indexList.length > (i + 1) && selectedPage < indexList[i + 1]))));
+    }
+    return list;
   }
 }
 

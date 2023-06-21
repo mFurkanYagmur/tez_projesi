@@ -106,6 +106,11 @@ class _PageManagerState extends State<_PageManager> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (pageModel.menuTitle != null)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(pageModel.menuTitle ?? ''),
+                          ),
                           IconButton(
                               onPressed: () {
                                 widget.navigateAddPage(pageModel);

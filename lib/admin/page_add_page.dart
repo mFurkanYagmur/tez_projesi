@@ -15,6 +15,7 @@ import '../viewmodels/page_add_viewmodel.dart';
 import '../widget/custom_solid_button.dart';
 import '../widget/loading_widget.dart';
 import '../widget/reorderable_data_list.dart';
+import '../widget/text_field_counter.dart';
 
 class PageAddPage extends StatelessWidget {
   const PageAddPage({super.key, this.pageModel});
@@ -82,6 +83,19 @@ class _PageAddPageState extends State<_PageAddPage> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (value) {
                 pageAddViewModel!.pageModel.orderNumber = int.tryParse(value);
+                pageAddViewModel!.notifyChanges();
+              },
+            ),
+            SizedBox(height: itemVerticalSpace),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Menü Başlığı'),
+              initialValue: pageAddViewModel!.pageModel.menuTitle,
+              maxLength: 20,
+              buildCounter: buildTextFieldCounter,
+              validator: (value) => Validators.requiredTextValidator(value, 3),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onChanged: (value) {
+                pageAddViewModel!.pageModel.menuTitle = value;
                 pageAddViewModel!.notifyChanges();
               },
             ),
